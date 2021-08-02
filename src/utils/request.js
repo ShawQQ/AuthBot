@@ -9,6 +9,7 @@ const send = (reqParam = {}, reqBody = {}, cb = () => {}, handleError = () => {}
 		});
 		result.on('data', (d) => {
 			let data = JSON.parse(d);
+			console.log(data);
 			cb(data);
 		});
 	});
