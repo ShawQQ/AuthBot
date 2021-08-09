@@ -48,7 +48,7 @@ const finalize = (req, res) => {
 
 function sendStart(data){
 	if(data.message === undefined){
-		console.log("Errore");
+		console.log(data);
 		return;
 	}
 	if(data.message.chat.type !== 'private'){
@@ -56,6 +56,7 @@ function sendStart(data){
 		return;
 	}
 	chat_id = data.message.chat.id;
+	if(data.message.text !== '/start') return;
 	let oauthParam = twitch.getOauthParameters();
 	let opt = {
 		chat_id: data.message.chat.id,
@@ -100,6 +101,26 @@ function sendMessage(opt){
 	let reqOpt = {
 		host: constants.telegram.api_host,
 		path: constants.telegram.base_url+'/sendMessage',
+		method: 'POST',
+		headers: {
+			'Content-type': 'application/json'
+		}
+	};
+	request.send(reqOpt, opt, (data) => {
+		setTimeout(() => {
+			let opt = {
+				chat_id: data.result.chat.id,
+				message_id: data.result.message_id
+			};
+			deleteMessage(opt);
+		}, 30000);
+	});
+}
+
+function deleteMessage(opt){
+	let reqOpt = {
+		host: constants.telegram.api_host,
+		path: constants.telegram.base_url+'/deleteMessage',
 		method: 'POST',
 		headers: {
 			'Content-type': 'application/json'

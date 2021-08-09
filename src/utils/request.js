@@ -9,11 +9,7 @@ const send = (reqParam = {}, reqBody = {}, cb = () => {}, handleError = () => {}
 		});
 		result.on('data', (d) => {
 			let data = JSON.parse(d);
-			if(data.status === undefined){
-				cb(data);
-			}else{
-				console.log(data);
-			}
+			cb(data);
 		});
 	});
 	if(reqBody){
