@@ -1,5 +1,6 @@
 let telegram = {
 	token: process.env.TELEGRAM_TOKEN,
+	group: process.env.TELEGRAM_GROUP,
 	api_host: "api.telegram.org",
 	base_url: '/bot'+process.env.TELEGRAM_TOKEN,
 	update_url: '/'+process.env.TELEGRAM_TOKEN+'/getUpdate'

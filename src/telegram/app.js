@@ -3,7 +3,7 @@ const path = require('path');
 const request = require('../utils/request');
 const twitch = require('../twitch/app');
 const constants = require('../utils/constant');
-let group_id = 0;
+let group_id = constants.telegram.group;
 let chat_id = 0;
 
 const getUpdate = (req, res) => {
@@ -52,6 +52,7 @@ function sendStart(data){
 		return;
 	}
 	if(data.message.chat.type !== 'private'){
+		console.log(data.message.chat.id);
 		if(group_id == 0) group_id = data.message.chat.id;
 		return;
 	}
