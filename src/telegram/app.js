@@ -47,6 +47,10 @@ const finalize = (req, res) => {
 }
 
 function sendStart(data){
+	if(data.message === undefined){
+		console.log("Errore");
+		return;
+	}
 	if(data.message.chat.type !== 'private'){
 		if(group_id == 0) group_id = data.message.chat.id;
 		return;
