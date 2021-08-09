@@ -55,12 +55,12 @@ function sendStart(data){
 	let oauthParam = twitch.getOauthParameters();
 	let opt = {
 		chat_id: data.message.chat.id,
-		text: "azioni",
+		text: "Effettua il login su twitch per confermare di essere abbonato",
 		reply_markup: {
 			inline_keyboard: [
 				[
 					{
-						text: "Effettua il login",
+						text: "Login",
 						url: "https://"+oauthParam.host + oauthParam.path,
 					}
 				]
