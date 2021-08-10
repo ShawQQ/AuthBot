@@ -8,9 +8,12 @@ const send = (reqParam = {}, reqBody = {}, cb = () => {}, handleError = () => {}
 			handleError(e);
 		});
 		result.on('data', (d) => {
-			let data = JSON.parse(d);
-			console.log(data);
-			cb(data);
+			try{
+				let data = JSON.parse(d);
+				cb(data);
+			}catch(e){
+				console.log(e);
+			}
 		});
 	});
 	if(reqBody){
