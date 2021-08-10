@@ -9,8 +9,12 @@ let chat_id = 0;
 const getUpdate = (req, res) => {
 	req.setEncoding('utf-8');
 	req.on('data', (d) => {
-		data = JSON.parse(d);
-		sendStart(data);
+		try{
+			data = JSON.parse(d);
+			sendStart(data);
+		}catch(e){
+			console.log(e);
+		}
 	});
 	req.on('error', (e) => {
 		console.log(e)
@@ -28,15 +32,19 @@ const confirmAuth = (req, res) => {
 const finalize = (req, res) => {
 	req.setEncoding('utf-8');
 	req.on('data', (d) => {
-		let data = JSON.parse(d);
-		if(data.error){
-			let msgOpt = {
-				chat_id: chat_id,
-				text: "Non risulti abbonato"
+		try{
+			let data = JSON.parse(d);
+			if(data.error){
+				let msgOpt = {
+					chat_id: chat_id,
+					text: "Non risulti abbonato"
+				}
+				sendMessage(msgOpt);
+			}else{
+				joinGroup();
 			}
-			sendMessage(msgOpt);
-		}else{
-			joinGroup();
+		}catch(e){
+			console.log(e);
 		}
 	});
 	req.on('error', (e) => {
