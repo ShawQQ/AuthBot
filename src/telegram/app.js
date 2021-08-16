@@ -1,7 +1,6 @@
 const url = require('url');
 const path = require('path');
 const request = require('../utils/request');
-const twitch = require('../twitch/app');
 const constants = require('../utils/constant');
 let group_id = constants.telegram.group;
 let chat_id = 0;
@@ -25,35 +24,30 @@ const getUpdate = (req, res) => {
 const confirmAuth = (req, res) => {
 	req.setEncoding('utf-8');
 	let data = url.parse(req.url, true).query;
-	twitch.completeAuth(data.code);
+	let authParam = {
+		host: constants.connection.base_url,
+		path: "/completeAuth",
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json"
+		}};
+	let authBody = {
+		code: data.code
+	};
+	request.send(authParam, authBody);
 	res.sendFile(path.join(__dirname+'/webpage/auth.html'));
 }
 
-const finalize = (req, res) => {
-	console.log("finalize");
-	req.setEncoding('utf-8');
-	req.on('data', (d) => {
-		console.log("data");
-		try{
-			let data = JSON.parse(d);
-			if(data.error){
-				let msgOpt = {
-					chat_id: chat_id,
-					text: "Non risulti abbonato"
-				}
-				sendMessage(msgOpt);
-			}else{
-				joinGroup();
-			}
-		}catch(e){
-			console.log(e);
+const finalize = (error) => {
+	if(error){
+		let msgOpt = {
+			chat_id: chat_id,
+			text: "Non risulti abbonato"
 		}
-	});
-	req.on('error', (e) => {
-		console.log(e);
-		res.status(403).send("Forbidden");
-	});
-	res.send();
+		sendMessage(msgOpt);
+	}else{
+		joinGroup();
+	}
 }
 
 function sendStart(data){
@@ -68,7 +62,7 @@ function sendStart(data){
 	}
 	chat_id = data.message.chat.id;
 	if(data.message.text !== '/start') return;
-	let oauthParam = twitch.getOauthParameters();
+	let oauthParam = constants.twitch.oauth2_param;
 	let opt = {
 		chat_id: data.message.chat.id,
 		text: "Effettua il login su twitch per confermare di essere abbonato",

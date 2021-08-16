@@ -11,7 +11,11 @@ let twitch = {
 	client_secret: process.env.TWITCH_CLIENT_SECRET,
 	oauth2_uri: process.env.OAUTH2_URI,
 	oauth2_complete: process.env.OAUTH2_COMPLETE,
-	user: process.env.USER
+	user: process.env.USER,
+	oauth2_param: {
+		host: "id.twitch.tv",
+		path: "/oauth2/authorize?client_id="+process.env.TWITCH_CLIENT_ID+'&redirect_uri='+process.env.OAUTH2_URI+'&response_type=code&scope=user:read:subscriptions&prompt=none',
+	}
 };
 
 let connection = {

@@ -1,4 +1,5 @@
 const telegram = require('../telegram/app');
+const twitch = require('../twitch/app');
 const constants = require('./constant');
 const request = require('./request');
 const express = require('express');
@@ -16,6 +17,7 @@ const setRoute = async () => {
 function setPost(){
 	app.post(constants.telegram.update_url, telegram.getUpdate);
 	app.post('/finalizeRequest', telegram.finalize);
+	app.post('/completeAuth', twitch.completeAuth);
 }
 
 function setGet(){

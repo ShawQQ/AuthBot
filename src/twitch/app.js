@@ -1,5 +1,6 @@
 const request = require('../utils/request');
 const constants = require('../utils/constant');
+const telegram = require('../telegram/app');
 let authToken = {
     creationDate: 0,
     expires: 0,
@@ -19,22 +20,25 @@ const getUser = async (username) => {
     return _getUser(userParam);
 }
 
-const getOauthParameters = () => {
-	let scope = "user:read:subscriptions";
-	let oauth2Param = {
-		host: "id.twitch.tv",
-		path: "/oauth2/authorize?client_id="+constants.twitch.client_id+'&redirect_uri='+constants.twitch.oauth2_uri+'&response_type=code&scope='+scope+'&prompt=none',
-	}
-	return oauth2Param;
-}
-
-const completeAuth = (code) => {
-	let authParam = {
-		host: "id.twitch.tv",
-        path: "/oauth2/token?client_id="+constants.twitch.client_id+"&client_secret="+constants.twitch.client_secret+"&code="+code+"&grant_type=authorization_code&redirect_uri="+process.env.OAUTH2_COMPLETE,
-        method: 'POST',
-	}
-	request.send(authParam, {}, (data) => checkUserSub(data.access_token));
+const completeAuth = (req, res) => {
+	req.setEncoding('utf-8');
+	req.on('data', (d) => {
+		try{
+			let data = JSON.parse(d);
+			let authParam = {
+				host: "id.twitch.tv",
+				path: "/oauth2/token?client_id="+constants.twitch.client_id+"&client_secret="+constants.twitch.client_secret+"&code="+data.code+"&grant_type=authorization_code&redirect_uri="+process.env.OAUTH2_COMPLETE,
+				method: 'POST',
+			}
+			request.send(authParam, {}, (data) => checkUserSub(data.access_token));
+		}catch(e){
+			console.log(e);
+		}
+	});
+	req.on('error', (e) => {
+		console.log(e)
+	});
+	res.send("");
 }
 
 async function checkUserSub(access_token){
@@ -51,18 +55,7 @@ async function checkUserSub(access_token){
 		method: "GET"
 	};
 	request.send(reqParam, {}, (data) => {
-		let confirmReq = {
-			host: constants.connection.base_url,
-			path: "/finalizeRequest",
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json"
-			}
-		};
-		let confirmBody = {
-			error: data.error !== undefined
-		};
-		request.send(confirmReq, confirmBody);
+		telegram.finalize(data.error !== undefined);
 	});
 }
 
@@ -118,6 +111,5 @@ function getAuthToken(resolve, reject){
 
 module.exports = {
     getUser: getUser,
-	getOauthParameters: getOauthParameters,
 	completeAuth: completeAuth
 }
