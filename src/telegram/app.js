@@ -31,8 +31,6 @@ const confirmAuth = (req, res) => {
 
 const finalize = (req, res) => {
 	console.log("finalize");
-	console.log(req);
-	console.log(res);
 	req.setEncoding('utf-8');
 	req.on('data', (d) => {
 		console.log("data");
