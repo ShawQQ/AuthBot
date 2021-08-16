@@ -82,6 +82,11 @@ async function getUserFromToken(access_token){
 
 function _getUser(opt){
 	return new Promise((resolve, reject) => {
+		if(data.data === undefined){
+			console.log(data);
+			reject(data);
+			return;
+		}
 		request.send(opt, {}, (data) => resolve(data.data[0].id), (e) => reject(e));
 	});
 }
