@@ -30,8 +30,10 @@ const confirmAuth = (req, res) => {
 }
 
 const finalize = (req, res) => {
+	console.log("finalize");
 	req.setEncoding('utf-8');
 	req.on('data', (d) => {
+		console.log("data");
 		try{
 			let data = JSON.parse(d);
 			if(data.error){
