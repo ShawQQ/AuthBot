@@ -17,10 +17,8 @@ const send = (reqParam = {}, reqBody = {}, cb = () => {}, handleError = () => {}
 		});
 	});
 	if(reqBody){
-		console.log(reqBody);
 		req.write(JSON.stringify(reqBody));
 	}
-	console.log("request end");
 	req.end();
 }
 
