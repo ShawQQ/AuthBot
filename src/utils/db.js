@@ -7,68 +7,45 @@ const client = new Client({
 	port: process.env.DB_PORT
 });
 
-const edit = async (edit) => {
-	await connect();
-	let query = edit.id !== undefined ? update(edit) : insert(edit);
-	result = await client.query(query);
-	await client.end();
+const insert = async (edit) => {
+	await client.query(
+		`INSERT INTO "user" 
+			(twitch_id, telegram_id, is_vip)
+			VALUES 
+			($1, $2, $3);
+		`, [edit.twitch_id, edit.telegram_id, edit.is_vip]);
 }
 
-const fetch = async (filters) => {
-	await connect();
-	let query = parseFilters(filters);
-	res = await client.query(query);
-	await client.end();
-	return res;
+const isSubbed = async (twitch_id) => {
+	let result = await client.query(
+		`
+			SELECT * FROM "user" WHERE "twitch_id" = $1
+		`, [twitch_id]);
+	return result.rows.length > 0;
+} 
+
+const createBaseTable = async () => {
+	await client.query(
+		`CREATE TABLE IF NOT EXISTS "user" (
+			id SERIAL NOT NULL PRIMARY KEY,  
+			twitch_id int NOT NULL UNIQUE,
+			telegram_id int NOT NULL UNIQUE,
+			is_vip BOOLEAN
+		);`
+	);
 }
 
-function update(edit){
-	let queryStr = `UPDATE "${edit.table}" SET `;
-	for (const field in edit.fields) {
-		if (Object.hasOwnProperty.call(edit.fields, field)) {
-			const element = edit.fields[field];
-			queryStr += `${field} = ${element}, `;
-		}
-	}
-	queryStr = queryStr.slice(0, queryStr.length - 2);
-	queryStr +=` WHERE id = ${edit.id}`;
-	return queryStr;
-}
-
-function insert(edit){
-	let queryStr = `INSERT INTO "${edit.table}" (`;
-	for (const field in edit.fields) {
-		if (Object.hasOwnProperty.call(edit.fields, field)) {
-			queryStr += `${field}, `;
-		}
-	}
-	queryStr = queryStr.slice(0, queryStr.length - 2);
-	queryStr += " ) VALUES (";
-	for (const field in edit.fields) {
-		if (Object.hasOwnProperty.call(edit.fields, field)) {
-			const element = edit.fields[field];
-			queryStr += `${element}, `;
-		}
-	}
-	queryStr = queryStr.slice(0, queryStr.length - 2);
-	queryStr += ")";
-	return queryStr;
-}
-
-function parseFilters(filters){
-	let queryStr = `SELECT * FROM "${filters.table}" WHERE `;
-	filters.values.forEach(element => {
-		queryStr += `${element.field} ${element.operator} ${element.value} AND `;
-	});
-	queryStr = queryStr.slice(0, queryStr.length - 4);
-	return queryStr;
-}
-
-async function connect(){
+const open = async () => {
 	await client.connect();
 }
 
+const close = async() => {
+	await client.end();
+}
 module.exports = {
-	edit: edit,
-	fetch: fetch
+	insert: insert,
+	isSubbed: isSubbed,
+	open: open,
+	close: close,
+	createBaseTable: createBaseTable,
 };
