@@ -78,8 +78,8 @@ class Database{
 		await this._client.query(
 			`CREATE TABLE IF NOT EXISTS "user" (
 				id SERIAL NOT NULL PRIMARY KEY,  
-				twitch_id int NOT NULL UNIQUE,
-				telegram_id int NOT NULL UNIQUE,
+				twitch_id int UNIQUE,
+				telegram_id int UNIQUE,
 				is_vip BOOLEAN
 			);`
 		);
