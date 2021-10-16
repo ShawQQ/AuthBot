@@ -29,13 +29,13 @@ class Database{
 	 */
 	async insert(edit){
 		this.checkConnection();
-		if(!this.userExist(edit)){
+		if(!await this.userExist(edit)){
 			await this._client.query(
 				`INSERT INTO "user" 
 					(twitch_id, telegram_id, is_vip)
 					VALUES 
 					($1, $2, $3);
-				`, [edit.twitch_id, edit.telegram_id, edit.is_vip]);
+				`, [edit.twitch_id, edit.telegram_id, edit.vip]);
 		}
 	}
 
@@ -48,7 +48,7 @@ class Database{
 	async delete(user){
 		this.checkConnection();
 		await this._client.query(
-			'DELETE FROM "user" WHERE twitch_id = $1 AND telegram_id = $2'
+			'DELETE FROM "user" WHERE twitch_id = $1 AND telegram_id = $2;'
 		, [user.twitch_id, user.telegram_id])
 	}
 
@@ -93,8 +93,8 @@ class Database{
 	 */
 	async userExist(user){
 		let result = await this._client.query(
-			'SELECT * from "user" WHERE twitch_id = $1 AND telegram_id = $2'
-		, [user.twitch_id, user.telegram_id])
+			'SELECT * from "user" WHERE twitch_id = $1 AND telegram_id = $2;'
+		, [user.twitch_id, user.telegram_id]);
 		return result.rowCount > 0;
 	}
 
