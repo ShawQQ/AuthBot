@@ -1,4 +1,4 @@
-let telegram = {
+const telegram = {
 	token: process.env.TELEGRAM_TOKEN,
 	group: process.env.TELEGRAM_GROUP,
 	api_host: "api.telegram.org",
@@ -6,7 +6,7 @@ let telegram = {
 	update_url: '/'+process.env.TELEGRAM_TOKEN+'/getUpdate'
 };
 
-let twitch = {
+const twitch = {
 	client_id: process.env.TWITCH_CLIENT_ID,
 	client_secret: process.env.TWITCH_CLIENT_SECRET,
 	oauth2_uri: process.env.OAUTH2_URI,
@@ -18,7 +18,7 @@ let twitch = {
 	}
 };
 
-let connection = {
+const connection = {
 	base_url: process.env.URL,
 	port: process.env.PORT
 }

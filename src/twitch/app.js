@@ -77,6 +77,10 @@ function _getUser(opt){
 	return new Promise((resolve, reject) => {
 		request.send(opt, {}, (data) => {
 			console.log(data);
+			if(data.data.length == 0){
+				reject("Utente non trovato");
+				return;
+			}
 			resolve(data.data[0].id);
 		}, (e) => reject(e));
 	});
