@@ -2,8 +2,11 @@ const url = require('url');
 const path = require('path');
 const request = require('../utils/request');
 const constants = require('../utils/constant');
+const { Database } = require('../utils/db');
 let group_id = constants.telegram.group;
 let chat_id = 0;
+let user_id = 0;
+const db = new Database();
 
 const getUpdate = (req, res) => {
 	req.setEncoding('utf-8');
@@ -38,7 +41,7 @@ const confirmAuth = (req, res) => {
 	res.sendFile(path.join(__dirname+'/webpage/auth.html'));
 }
 
-const finalize = (error) => {
+const finalize = async (error, twitch_id) => {
 	if(error){
 		let msgOpt = {
 			chat_id: chat_id,
@@ -47,6 +50,12 @@ const finalize = (error) => {
 		sendMessage(msgOpt);
 	}else{
 		joinGroup();
+		if(!db.connected) await db.open();
+		await db.insert({
+			twitch_id: twitch_id,
+			telegram_id: user_id,
+			vip: false
+		});
 	}
 }
 
@@ -60,8 +69,9 @@ function sendStart(data){
 		if(group_id == 0) group_id = data.message.chat.id;
 		return;
 	}
-	chat_id = data.message.chat.id;
 	if(data.message.text !== '/start') return;
+	chat_id = data.message.chat.id;
+	user_id = data.message.from.id;
 	let oauthParam = constants.twitch.oauth2_param;
 	let opt = {
 		chat_id: data.message.chat.id,

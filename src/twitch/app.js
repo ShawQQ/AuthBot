@@ -55,7 +55,7 @@ async function checkUserSub(access_token){
 		method: "GET"
 	};
 	request.send(reqParam, {}, (data) => {
-		telegram.finalize(data.error !== undefined);
+		telegram.finalize(data.error !== undefined, user_id);
 	});
 }
 
