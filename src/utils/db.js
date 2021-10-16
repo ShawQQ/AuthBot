@@ -8,7 +8,7 @@ class Database{
 		this._client = new Client({
 			connectionString: process.env.DATABASE_URL,
 			ssl: {
-				rejectUnauthorized: !process.env.SANDBOX
+				rejectUnauthorized: false
 			}
 		});
 	}
