@@ -12,7 +12,7 @@ const send = (reqParam = {}, reqBody = {}, cb = () => {}, handleError = () => {}
 				let data = JSON.parse(d);
 				cb(data);
 			}catch(e){
-				console.log(e);
+				console.log(d);
 			}
 		});
 	});
