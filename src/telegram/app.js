@@ -56,6 +56,7 @@ const finalize = async (error, twitch_id) => {
 			telegram_id: user_id,
 			vip: false
 		});
+		console.log("Utente inserito: Twitch: " + twitch_id + "Telegram: " + user_id);
 	}
 }
 
@@ -87,6 +88,7 @@ function sendStart(data){
 			]
 		}
 	};
+	console.log([chat_id, user_id]);
 	sendMessage(opt);
 }
 
