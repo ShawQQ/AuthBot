@@ -1,11 +1,95 @@
+const url = require('url');
+const path = require('path');
 const request = require('../utils/request');
 const constants = require('../utils/constant');
 const telegram = require('../telegram/app');
+const { Database } = require('../utils/db');
 let authToken = {
     creationDate: 0,
     expires: 0,
     token: ""
 };
+
+const adminAuth = (req, res) => {
+	req.setEncoding('utf-8');
+	let data = url.parse(req.url, true).query;
+	let authParam = {
+		host: constants.connection.base_url,
+		path: "/completeAdminAuth",
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json"
+		}};
+	let authBody = {
+		code: data.code
+	};
+	request.send(authParam, authBody);
+	res.sendFile(path.join(__dirname+'/webpage/confirm.html'));
+}
+
+const confirmAdminAuth = (req, res) => {
+	req.setEncoding('utf-8');
+	req.on('data', (d) => {
+		try{
+			let data = JSON.parse(d);
+			let authParam = {
+				host: "id.twitch.tv",
+				path: "/oauth2/token?client_id="+constants.twitch.client_id+"&client_secret="+constants.twitch.client_secret+"&code="+data.code+"&grant_type=authorization_code&redirect_uri="+process.env.OAUTH2_COMPLETE,
+				method: 'POST',
+			}
+			request.send(authParam, {}, async (data) => {
+				let db = new Database();
+				await db.open();
+				await db.updateAccessToken(data.access_token, data.refresh_token);
+				await db.close();
+			});
+		}catch(e){
+			console.log(e);
+		}
+	});
+	req.on('error', (e) => {
+		console.log(e)
+	});
+	res.send("");
+}
+
+const updateAdminToken = async () => {
+	let db = new Database();
+	await db.open();
+	let oldToken = await db.getCurrentToken();
+	var updateParam = {
+		host: "id.twitch.tv",
+        path: "/oauth2/token/?grant_type=refresh_token&refresh_token="+oldToken.refresh_token+"client_id="+constants.twitch.client_id+"client_secret="+constants.twitch.client_secret,
+        method: 'POST',
+	}
+
+	request.send(updateParam, {}, async (data) => {
+		await db.updateAccessToken(data.access_token, data.refresh_token);
+		await db.close();
+	})
+}
+
+const getCurrentSubs = async () => {
+	let db = new Database();
+	await updateAdminToken(); 
+	await db.open();
+	let token = await db.getCurrentToken();
+	let broadcaster_id = await getUserFromToken(token);
+	var authParam = {
+		host: "api.twitch.tv",
+        path: "helix/subscriptions?broadcaster_id="+broadcaster_id,
+        method: 'GET',
+        headers: {
+            "Client-ID": constants.twitch.client_id,
+            "Authorization": "Bearer "+ token
+        }
+	}
+
+	request.send(authParam, {}, (data) => {
+		console.log(data);
+	});
+}
+
 const getUser = async (username) => {
     await updateAuthToken();
     var userParam = {
@@ -115,5 +199,9 @@ function getAuthToken(resolve, reject){
 
 module.exports = {
     getUser: getUser,
-	completeAuth: completeAuth
+	completeAuth: completeAuth,
+	adminAuth: adminAuth,
+	confirmAdminAuth: confirmAdminAuth,
+	updateAdminToken: updateAdminToken,
+	getCurrentSubs: getCurrentSubs
 }

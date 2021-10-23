@@ -78,8 +78,36 @@ class Database{
 				twitch_id int UNIQUE,
 				telegram_id int UNIQUE,
 				is_vip BOOLEAN
+			);
+			CREATE TABLE IF NOT EXISTS "access_token" (
+				id SERIAL NOT NULL PRIMARY KEY,
+				access_token varchar(255) UNIQUE,
+				refresh_token varchar(255) UNIQUE
 			);`
 		);
+	}
+
+	async getCurrentToken(){
+		this.checkConnection();
+		let result = await this._client.query(
+			'SELECT * FROM "access_token";'
+		);
+		
+		if(result.rowCount == 0){
+			return false;
+		}
+
+		return result.rows[0].access_token;
+	}
+
+	async updateAccessToken(newToken, refreshToken){
+		this.checkConnection();
+		await this._client.query(
+			`DELETE FROM "access_token";`
+		);
+		await this._client.query(
+			`INSERT INTO "access_token" (access_token, refresh_token) VALUES ($1, $2)`
+		, [newToken, refreshToken])
 	}
 
 	/**

@@ -18,10 +18,12 @@ function setPost(){
 	app.post(constants.telegram.update_url, telegram.getUpdate);
 	app.post('/finalizeRequest', telegram.finalize);
 	app.post('/completeAuth', twitch.completeAuth);
+	app.post('/completeAdminAuth', twitch.confirmAdminAuth);
 }
 
 function setGet(){
 	app.get('/auth', telegram.confirmAuth);
+	app.get("/adminAuth", twitch.adminAuth);
 }
 
 function setWebhook(){

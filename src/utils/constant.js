@@ -15,7 +15,8 @@ const twitch = {
 	oauth2_param: {
 		host: "id.twitch.tv",
 		path: "/oauth2/authorize?client_id="+process.env.TWITCH_CLIENT_ID+'&redirect_uri='+process.env.OAUTH2_URI+'&response_type=code&scope=user:read:subscriptions&prompt=none',
-	}
+	},
+	adminOauthUrl: "https://id.twitch.tv/oauth2/authorize?client_id="+process.env.TWITCH_CLIENT_ID+'&redirect_uri='+process.env.OAUTH2_ADMIN_URI+'&response_type=code&scope=channel:read:subscriptions&prompt=none'
 };
 
 const connection = {
