@@ -1,8 +1,5 @@
 const { Client } = require('pg');
 class Database{
-	_connected;
-	client = {}
-
 	constructor(){
 		this._connected = false;
 		this._client = new Client({
@@ -96,6 +93,26 @@ class Database{
 			'SELECT * from "user" WHERE twitch_id = $1 AND telegram_id = $2;'
 		, [user.twitch_id, user.telegram_id]);
 		return result.rowCount > 0;
+	}
+
+	/**
+	 * Ritorna tutti gli utenti attualmente presenti nel database non vip
+	 * @returns utenti attualmente presenti nel database non vip
+	 */
+	async getUsers(){
+		this.checkConnection();
+		const users = [];
+		const result = await this._client.query(
+			'SELECT * from "user" WHERE is_vip = false'
+		);
+		for (const row of result.rows) {
+			users.push({
+				twitch_id: row.twitch_id,
+				telegram_id: row.telegram_id,
+			});
+		}
+
+		return users;
 	}
 
 	checkConnection(){
