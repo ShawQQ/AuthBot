@@ -146,8 +146,26 @@ function deleteMessage(opt){
 	request.send(reqOpt, opt);
 }
 
+const banUsers = (ids) => {
+	let reqOpt = {
+		host: constants.telegram.api_host,
+		path: constants.telegram.base_url+'/banChatMember',
+		method: 'POST',
+		headers: {
+			'Content-type': 'application/json'
+		}
+	};
+	let opt = {
+		chat_id: chat_id,
+		until_date: Date.now() + 1 * 100 * 600,
+		revoke_messages: false
+	}
+	request.send(reqOpt, opt);
+}
+
 module.exports = {
 	getUpdate: getUpdate,
 	confirmAuth: confirmAuth,
-	finalize: finalize
+	finalize: finalize,
+	banUsers: banUsers
 }
