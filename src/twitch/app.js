@@ -57,16 +57,16 @@ const updateAdminToken = async () => {
 	let db = new Database();
 	await db.open();
 	let oldToken = await db.getCurrentToken();
+	if(!oldToken) throw new Error("Token non disponibile");
 	var updateParam = {
 		host: "id.twitch.tv",
-        path: "/oauth2/token/?grant_type=refresh_token&refresh_token="+oldToken.refresh_token+"client_id="+constants.twitch.client_id+"client_secret="+constants.twitch.client_secret,
+        path: "/oauth2/token?grant_type=refresh_token&refresh_token="+oldToken.refresh+"&client_id="+constants.twitch.client_id+"&client_secret="+constants.twitch.client_secret,
         method: 'POST',
 	}
-
 	request.send(updateParam, {}, async (data) => {
 		await db.updateAccessToken(data.access_token, data.refresh_token);
 		await db.close();
-	})
+	});
 }
 
 const getCurrentSubs = async () => {
@@ -74,20 +74,41 @@ const getCurrentSubs = async () => {
 	await updateAdminToken(); 
 	await db.open();
 	let token = await db.getCurrentToken();
-	let broadcaster_id = await getUserFromToken(token);
+	if(!token) throw new Error("Token non disponibile");
+	let broadcaster_id = await getUserFromToken(token.access);
+	return await _getCurrentSubs('', token, broadcaster_id);
+}
+
+async function _getCurrentSubs(pagination, token, broadcaster_id){
 	var authParam = {
 		host: "api.twitch.tv",
-        path: "helix/subscriptions?broadcaster_id="+broadcaster_id,
+        path: "helix/subscriptions?broadcaster_id="+broadcaster_id+"&first=100",
         method: 'GET',
         headers: {
             "Client-ID": constants.twitch.client_id,
-            "Authorization": "Bearer "+ token
+            "Authorization": "Bearer "+ token.access
         }
 	}
-
-	request.send(authParam, {}, (data) => {
-		console.log(data);
+	if(pagination){
+		authParam.path += '&after='+pagination;
+	}
+	let data = [];
+	request.send(authParam, {}, (d) => {
+		data = d;
 	});
+	//cristo
+	await new Promise(r => setTimeout(r, 500));
+	let users = [];
+	for(const user of data.data){
+		users.push({
+			id: user.user_id
+		});
+	}
+	if(data.data.length !== 0){
+		//peggio mi sento
+		users = users.concat(await _getCurrentSubs(data.pagination.cursor, token, broadcaster_id));
+	}
+	return users;
 }
 
 const getUser = async (username) => {

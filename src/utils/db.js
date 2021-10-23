@@ -96,8 +96,12 @@ class Database{
 		if(result.rowCount == 0){
 			return false;
 		}
-
-		return result.rows[0].access_token;
+		
+		let token = {
+			access: result.rows[0].access_token,
+			refresh: result.rows[0].refresh_token
+		}
+		return token;
 	}
 
 	async updateAccessToken(newToken, refreshToken){
