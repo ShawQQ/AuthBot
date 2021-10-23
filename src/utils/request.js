@@ -7,12 +7,15 @@ const send = (reqParam = {}, reqBody = {}, cb = () => {}, handleError = () => {}
 			console.log(e);
 			handleError(e);
 		});
-		result.on('data', (d) => {
+		let body = '';
+		result.on('data', (chunk) => {
+			body += chunk;
+		}).on('end', () => {
 			try{
-				let data = JSON.parse(d);
+				let data = JSON.parse(body);
 				cb(data);
 			}catch(e){
-				console.log(d);
+				console.log(e);
 			}
 		});
 	});
