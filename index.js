@@ -9,29 +9,42 @@ db.open().then(async () => {
 	await db.close();
 	require('./src/utils/route').setRoute();
 	//AUTOBAN
-	setInterval(async () => {
-		try{
-			let users = await twitch.getCurrentSubs();
-			if(!db._connected) await db.open();
-			let currentUser = await db.getUsers();
-			let toBan = [];
-			
-			for(const current of currentUser){
-				let ban = true;
-				for(const user of users){
-					if(user.id == current.twitch_id){
-						ban = false;
-						break;
-					}
-				}
-				if(ban){
-					toBan.push(current.telegram_id);
+	let timeout = 30 * 24 * 60 * 60 * 1000;
+	//max 32 bit integer;
+	let upperMsBound = 2147483647;
+	let extraAwait = timeout - upperMsBound;
+	if(extraAwait){
+		setTimeout(() => {
+			setTimeout(autoban, extraAwait);
+		}, upperMsBound);
+	}else{
+		setTimeout(autoban, timeout);
+	}
+});
+
+const autoban = async () => {
+	try{
+		let users = await twitch.getCurrentSubs();
+		if(!db._connected) await db.open();
+		let currentUser = await db.getUsers();
+		let toBan = [];
+		
+		for(const current of currentUser){
+			let ban = true;
+			for(const user of users){
+				if(user.id == current.twitch_id){
+					ban = false;
+					break;
 				}
 			}
-			telegram.banUsers(toBan);
-			await db.close();
-		}catch(e){
-			console.error("Autoban error: "+e);
+			if(ban){
+				toBan.push(current.telegram_id);
+			}
 		}
-	}, 30 * 24 * 60 * 60 * 1000);
-});
+		console.log(toBan);
+		// telegram.banUsers(toBan);
+		await db.close();
+	}catch(e){
+		console.error("Autoban error: "+e);
+	}
+}
