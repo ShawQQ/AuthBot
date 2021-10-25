@@ -1,13 +1,15 @@
 import { DatabaseFactory } from "./src/utils/database/db";
 import { Database } from "./src/utils/database/interfaces";
-import { Router } from "./src/utils/routing/route";
+import { RouterFactory } from "./src/utils/routing/route";
+import { Router } from "src/utils/routing/router";
 import 'dotenv/config';
 
 let db: Database = DatabaseFactory.getDatabase();
+let router: Router = RouterFactory.getRouter();
 db.open().then(async () => {
 	await db.createBaseTable();
 	await db.close();
-	Router.setRoute();
+	router.setRoute();
 });
 
 //AUTOBAN
