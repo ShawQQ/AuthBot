@@ -42,8 +42,7 @@ const autoban = async () => {
 				toBan.push(current.telegram_id);
 			}
 		}
-		console.log(toBan);
-		// telegram.banUsers(toBan);
+		telegram.banUsers(toBan);
 		await db.close();
 	}catch(e){
 		console.error("Autoban error: "+e);
