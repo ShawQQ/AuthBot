@@ -23,7 +23,7 @@ export class Telegram{
 				console.log(e);
 			}
 		});
-		req.on('error', (e) => {
+		req.on('error', (e: any) => {
 			console.log(e)
 		});
 		res.send("");
