@@ -1,8 +1,8 @@
-const { Client } = require('pg');
+const { Pool } = require('pg');
 class Database{
 	constructor(){
 		this._connected = false;
-		this._client = new Client({
+		this._pool = new Pool({
 			// user: process.env.DB_USER,
 			// host: process.env.DB_HOST,
 			// database: process.env.DB_NAME,
@@ -58,7 +58,7 @@ class Database{
 	 * Apri connesione al database
 	 */
 	async open(){
-		await this._client.connect();
+		this._client = await this._pool.connect();
 		this._connected = true;
 	}
 
@@ -67,7 +67,7 @@ class Database{
 	 */
 	async close(){
 		this.checkConnection();
-		await this._client.end();
+		this._client.release();
 		this._connected = false;
 	}
 
