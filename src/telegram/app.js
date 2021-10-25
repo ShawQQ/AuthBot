@@ -155,12 +155,15 @@ const banUsers = (ids) => {
 			'Content-type': 'application/json'
 		}
 	};
-	let opt = {
-		chat_id: chat_id,
-		until_date: Date.now() + 1 * 100 * 600,
-		revoke_messages: false
+	for(const id of ids){
+		let opt = {
+			chat_id: chat_id,
+			user_id: id,
+			until_date: Date.now() + 1 * 100 * 600,
+			revoke_messages: false
+		}
+		request.send(reqOpt, opt);
 	}
-	request.send(reqOpt, opt);
 }
 
 module.exports = {
