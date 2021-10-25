@@ -3,6 +3,11 @@ class Database{
 	constructor(){
 		this._connected = false;
 		this._client = new Client({
+			// user: process.env.DB_USER,
+			// host: process.env.DB_HOST,
+			// database: process.env.DB_NAME,
+			// password: process.env.DB_PASSWORD,
+			// port: process.env.DB_PORT
 			connectionString: process.env.DATABASE_URL,
 			ssl: {
 				rejectUnauthorized: false
@@ -29,10 +34,10 @@ class Database{
 		if(!await this.userExist(edit)){
 			await this._client.query(
 				`INSERT INTO "user" 
-					(twitch_id, telegram_id, is_vip)
+					(twitch_id, telegram_id, is_vip, telegram_handle)
 					VALUES 
-					($1, $2, $3);
-				`, [edit.twitch_id, edit.telegram_id, edit.vip]);
+					($1, $2, $3, $4);
+				`, [edit.twitch_id, edit.telegram_id, edit.is_vip, edit.telegram_handle]);
 		}
 	}
 
@@ -77,6 +82,7 @@ class Database{
 				id SERIAL NOT NULL PRIMARY KEY,  
 				twitch_id int UNIQUE,
 				telegram_id int UNIQUE,
+				telegram_handle varchar(255),
 				is_vip BOOLEAN
 			);
 			CREATE TABLE IF NOT EXISTS "access_token" (
@@ -141,6 +147,7 @@ class Database{
 			users.push({
 				twitch_id: row.twitch_id,
 				telegram_id: row.telegram_id,
+				telegram_handle: row.telegram_handle
 			});
 		}
 
