@@ -1,12 +1,13 @@
-require('dotenv').config();
-const { Database } = require('./src/utils/db');
-const constants = require('./src/utils/constant');
-const twitch = require('./src/twitch/app');
-const db = new Database();
+import { DatabaseFactory } from "./src/utils/database/db";
+import { Database } from "./src/utils/database/interfaces";
+import { Router } from "./src/utils/routing/route";
+import 'dotenv/config';
+
+let db: Database = DatabaseFactory.getDatabase();
 db.open().then(async () => {
 	await db.createBaseTable();
 	await db.close();
-	require('./src/utils/route').setRoute();
+	Router.setRoute();
 });
 
 //AUTOBAN
