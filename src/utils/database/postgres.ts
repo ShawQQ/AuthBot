@@ -1,5 +1,6 @@
 import { Client } from "pg";
 import { Database, UserEdit, AccessToken } from "./interfaces";
+import 'dotenv/config';
 
 export class PostgresDatabase implements Database{
 	private _connected: boolean = false;
@@ -8,10 +9,15 @@ export class PostgresDatabase implements Database{
 	constructor(){
 		this._connected = false;
 		this._client = new Client({
-			connectionString: process.env.DATABASE_URL,
-			ssl: {
-				rejectUnauthorized: false
-			}
+			user: process.env.DB_USER,
+			host: process.env.DB_HOST,
+			database: process.env.DB_NAME as unknown as string,
+			password: process.env.DB_PASSWORD as unknown as string,
+			port: process.env.DB_PORT as unknown as number
+			// connectionString: process.env.DATABASE_URL,
+			// ssl: {
+			// 	rejectUnauthorized: false
+			// }
 		});
 	}
 
@@ -23,7 +29,7 @@ export class PostgresDatabase implements Database{
 	}
 
 	public async insert(edit: UserEdit){
-		this.checkConnection();
+		await this.checkConnection();
 		if(!await this.userExist(edit)){
 			await this._client.query(
 				`INSERT INTO "user" 
@@ -35,7 +41,7 @@ export class PostgresDatabase implements Database{
 	}
 
 	public async delete(user: UserEdit){
-		this.checkConnection();
+		await this.checkConnection();
 		await this._client.query(
 			'DELETE FROM "user" WHERE twitch_id = $1 AND telegram_id = $2;'
 		, [user.twitch_id, user.telegram_id])
@@ -47,13 +53,13 @@ export class PostgresDatabase implements Database{
 	}
 
 	public async close(){
-		this.checkConnection();
+		await this.checkConnection();
 		await this._client.end();
 		this._connected = false;
 	}
 	
 	public async createBaseTable(){
-		this.checkConnection();
+		await this.checkConnection();
 		await this._client.query(
 			`CREATE TABLE IF NOT EXISTS "user" (
 				id SERIAL NOT NULL PRIMARY KEY,  
@@ -69,12 +75,12 @@ export class PostgresDatabase implements Database{
 		);
 	}
 
-	public async getCurrentToken(): Promise<boolean | AccessToken>{
-		this.checkConnection();
+	public async getCurrentToken(): Promise<AccessToken>{
+		await this.checkConnection();
 		let result = await this._client.query(
 			'SELECT * FROM "access_token";'
 		);
-		if(result.rowCount == 0) return false;
+		if(result.rowCount == 0) return undefined;
 		return {
 			access: result.rows[0].access_token,
 			refresh: result.rows[0].refresh_token
@@ -82,7 +88,7 @@ export class PostgresDatabase implements Database{
 	}
 
 	public async updateAccessToken(token: AccessToken){
-		this.checkConnection();
+		await this.checkConnection();
 		await this._client.query(
 			`DELETE FROM "access_token";`
 		);
@@ -92,7 +98,7 @@ export class PostgresDatabase implements Database{
 	}
 
 	public async getUsers(): Promise<UserEdit[]>{
-		this.checkConnection();
+		await this.checkConnection();
 		const users: UserEdit[] = [];
 		const result = await this._client.query(
 			'SELECT * from "user" WHERE is_vip = false'
@@ -125,10 +131,8 @@ export class PostgresDatabase implements Database{
 	 * @throws Error se la connessione non risulta aperta
 	 * @returns true se la connessione è aperta
 	 */
-	private checkConnection(): boolean{
-		if(!this._connected){
-			throw new Error("Connesione al database non aperta");
-		}
+	private async checkConnection(): Promise<boolean>{
+		if(!this._connected) await this.open();
 		return true;
 	}
 }
