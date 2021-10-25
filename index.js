@@ -9,6 +9,7 @@ db.open().then(async () => {
 	await db.close();
 	require('./src/utils/route').setRoute();
 	//AUTOBAN
+	autoban();
 	let timeout = 30 * 24 * 60 * 60 * 1000;
 	//max 32 bit integer;
 	let upperMsBound = 2147483647;
