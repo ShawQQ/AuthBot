@@ -163,7 +163,7 @@ const banUsers = (ids) => {
 			revoke_messages: false
 		}
 		console.log("Ban utente: "+id);
-		request.send(reqOpt, opt, (data) => console.log("Ban response: "+data));
+		request.send(reqOpt, opt, (data) => console.log("Ban response: "+JSON.stringify(data)));
 	}
 }
 
