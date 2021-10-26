@@ -3,6 +3,7 @@ import { DatabaseFactory } from "../utils/database/db";
 import { AccessToken, Database } from "../utils/database/interfaces";
 import { RequestParameter } from "../utils/interface/common_interface";
 import { Utils } from "../utils/utils";
+import { html } from "./views/confirm.html";
 const url = require('url');
 const path = require('path');
 
@@ -98,7 +99,7 @@ export class Twitch{
 			code: data.code
 		};
 		Utils.send(authParam, authBody);
-		res.sendFile(path.join(__dirname+'/webpage/confirm.html'));
+		res.sendFile(html);
 	}
 	
 	public confirmAdminAuth = (req: any, res: any) => {

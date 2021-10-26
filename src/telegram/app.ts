@@ -2,6 +2,7 @@ import { DatabaseFactory } from "../utils/database/db";
 import { Database } from "../utils/database/interfaces";
 import { RequestParameter } from "../utils/interface/common_interface";
 import { Utils } from "../utils/utils";
+import { html } from "./views/auth.html";
 
 const url = require('url');
 const path = require('path');
@@ -43,7 +44,7 @@ export class Telegram{
 			code: data.code
 		};
 		Utils.send(authParam, authBody);
-		res.sendFile(path.join(__dirname+'/webpage/auth.html'));
+		res.sendFile(html);
 	}
 
 	

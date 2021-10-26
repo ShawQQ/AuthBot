@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+export const html: string = `<!DOCTYPE html>
 <html class="h-100" lang="it">
 	<head>
 		<meta charset="utf-8">
@@ -16,4 +16,4 @@
 			</div>
 		</div>
 	</body>
-</html>
+</html>`;
