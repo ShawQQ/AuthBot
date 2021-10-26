@@ -1,4 +1,8 @@
 import { RequestParameter } from "./interface/common_interface";
+import { Telegram } from "src/telegram/app";
+import { Twitch } from "src/twitch/app";
+import { DatabaseFactory } from "./database/db";
+import { Database } from "./database/interfaces";
 import 'dotenv/config';
 const https = require('https');
 
@@ -69,5 +73,35 @@ export abstract class Utils{
 
 	public static generateQuery(queryArg: any): string {
 		return new URLSearchParams(queryArg).toString();
+	}
+
+	public static async autoban(){
+		const telegram: Telegram = new Telegram();
+		const twitch: Twitch = new Twitch();
+		const db: Database = DatabaseFactory.getDatabase();
+
+		try{
+			let users = await twitch.getCurrentSubs();
+			let currentUser = await db.getUsers();
+			let toBan = [];
+			
+			for(const current of currentUser){
+				let ban = true;
+				for(const id of users){
+					if(id == current.twitch_id){
+						ban = false;
+						break;
+					}
+				}
+				if(ban){
+					toBan.push(current.telegram_id);
+				}
+			}
+			console.log(toBan);
+			telegram.banUsers(toBan);
+			await db.close();
+		}catch(e){
+			console.error("Autoban error: "+e);
+		}
 	}
 }

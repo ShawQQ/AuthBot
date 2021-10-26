@@ -2,6 +2,7 @@ import { DatabaseFactory } from "./src/utils/database/db";
 import { Database } from "./src/utils/database/interfaces";
 import { RouterFactory } from "./src/utils/routing/route";
 import { Router } from "src/utils/routing/router";
+import { Utils } from "src/utils/utils";
 import 'dotenv/config';
 
 let db: Database = DatabaseFactory.getDatabase();
@@ -10,27 +11,17 @@ db.open().then(async () => {
 	await db.createBaseTable();
 	await db.close();
 	router.setRoute();
-});
 
-//AUTOBAN
-/*
-db.open().then(async () => {
-	let users = await twitch.getCurrentSubs();
-	let currentUser = await db.getUsers();
-	let toBan = [];
-	
-	for(const current of currentUser){
-		let ban = true;
-		for(const user of users){
-			if(user.id == current.twitch_id){
-				ban = false;
-				break;
-			}
-		}
-		if(ban){
-			toBan.push(current.telegram_id);
-		}
+	/* AUTOBAN */
+	let timeout = 30 * 24 * 60 * 60 * 1000;
+	//max 32 bit integer;
+	let upperMsBound = 2147483647;
+	let extraAwait = timeout - upperMsBound;
+	if(extraAwait){
+		setInterval(() => {
+			setInterval(Utils.autoban, extraAwait);
+		}, upperMsBound);
+	}else{
+		setInterval(Utils.autoban, timeout);
 	}
-	console.log(toBan);
 });
-*/
