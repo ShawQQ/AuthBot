@@ -162,7 +162,8 @@ const banUsers = (ids) => {
 			until_date: Date.now() + 1 * 100 * 600,
 			revoke_messages: false
 		}
-		request.send(reqOpt, opt);
+		console.log("Ban utente: "+id);
+		request.send(reqOpt, opt, (data) => console.log("Ban response: "+data));
 	}
 }
 
