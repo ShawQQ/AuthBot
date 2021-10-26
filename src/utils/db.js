@@ -50,8 +50,8 @@ class Database{
 	async delete(user){
 		this.checkConnection();
 		await this._client.query(
-			'DELETE FROM "user" WHERE twitch_id = $1 AND telegram_id = $2;'
-		, [user.twitch_id, user.telegram_id])
+			'DELETE FROM "user" telegram_id = $2;'
+		, [user.telegram_id])
 	}
 
 	/**

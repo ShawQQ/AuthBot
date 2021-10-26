@@ -161,9 +161,14 @@ const banUsers = (ids) => {
 			user_id: id,
 			until_date: Date.now() + 1 * 100 * 600,
 			revoke_messages: false
-		}
+		};
 		console.log("Ban utente: "+id);
-		request.send(reqOpt, opt, (data) => console.log("Ban response: "+JSON.stringify(data)));
+		request.send(reqOpt, opt, (data) => {
+			console.log("Ban response: "+JSON.stringify(data));
+			if(data.ok) db.delete({
+				telegram_id: id
+			});
+		});
 	}
 }
 
