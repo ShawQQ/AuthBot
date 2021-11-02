@@ -44,6 +44,7 @@ const autoban = async () => {
 				});
 			}
 		}
+		console.log(toBan);
 		telegram.banUsers(toBan);
 		await db.close();
 	}catch(e){

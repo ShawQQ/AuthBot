@@ -157,12 +157,18 @@ const banUsers = (ids) => {
 	};
 	for(const id of ids){
 		let opt = {
-			chat_id: chat_id,
+			chat_id: group_id,
 			user_id: id,
 			until_date: Date.now() + 1 * 100 * 600,
 			revoke_messages: false
-		}
-		request.send(reqOpt, opt);
+		};
+		console.log("Ban utente: "+id);
+		request.send(reqOpt, opt, (data) => {
+			console.log("Ban response: "+JSON.stringify(data));
+			if(data.ok) db.delete({
+				telegram_id: id
+			});
+		});
 	}
 }
 
