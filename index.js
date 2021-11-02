@@ -8,8 +8,6 @@ db.open().then(async () => {
 	await db.createBaseTable();
 	await db.close();
 	require('./src/utils/route').setRoute();
-	//AUTOBAN
-	autoban();
 	let timeout = 30 * 24 * 60 * 60 * 1000;
 	//max 32 bit integer;
 	let upperMsBound = 2147483647;
@@ -40,6 +38,10 @@ const autoban = async () => {
 			}
 			if(ban){
 				toBan.push(current.telegram_id);
+				await db.delete({
+					telegram_id: current.telegram_id,
+					twitch_id: current.twitch_id
+				});
 			}
 		}
 		telegram.banUsers(toBan);
