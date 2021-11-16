@@ -130,7 +130,7 @@ export class Twitch{
 				console.log(e);
 			}
 		});
-		req.on('error', (e) => {
+		req.on('error', (e: any) => {
 			console.log(e)
 		});
 		res.send("");
@@ -194,7 +194,7 @@ export class Twitch{
 	private updateAuthToken(): UserAuthToken | Promise<UserAuthToken>{
 		let now: number = Date.now();
 		if(this.authToken.creationDate - now > this.authToken.expires && this.authToken.token.length != 0) return this.authToken;
-		return new Promise(this.getAuthToken);
+		return new Promise(this.getAuthToken.bind(this));
 	}
 	
 	private getAuthToken(resolve?: Function, reject?: Function){
@@ -222,7 +222,7 @@ export class Twitch{
 		return new Promise((resolve, reject) => {
 			Utils.send(opt, {}, (data: any) => {
 				console.log(data);
-				if(data.data.length == 0){
+				if(data === undefined || data.data === undefined || data.data.length == 0){
 					reject("Utente non trovato");
 					return;
 				}

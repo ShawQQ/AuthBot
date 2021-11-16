@@ -5,7 +5,6 @@ import { Utils } from "../utils/utils";
 import { html } from "./views/auth.html";
 
 const url = require('url');
-const path = require('path');
 
 export class Telegram{
 	db: Database = DatabaseFactory.getDatabase();
@@ -44,7 +43,7 @@ export class Telegram{
 			code: data.code
 		};
 		Utils.send(authParam, authBody);
-		res.sendFile(html);
+		res.send(html);
 	}
 
 	
@@ -140,7 +139,7 @@ export class Telegram{
 	}
 
 	
-	private sendMessage(opt){
+	private sendMessage(opt: any){
 		let reqOpt: RequestParameter = {
 			host: this.telegram_const.api_host,
 			path:this.telegram_const.base_url+'/sendMessage',

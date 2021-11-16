@@ -1,6 +1,6 @@
 import { RequestParameter } from "./interface/common_interface";
-import { Telegram } from "src/telegram/app";
-import { Twitch } from "src/twitch/app";
+import { Telegram } from "./../../src/telegram/app";
+import { Twitch } from "./../../src/twitch/app";
 import { DatabaseFactory } from "./database/db";
 import { Database } from "./database/interfaces";
 import 'dotenv/config';
@@ -49,10 +49,6 @@ export abstract class Utils{
 	public static send(reqParam?: RequestParameter, reqBody?: any, cb: (data?: any) => any = () => {}, handleError: (e: any) => any = () => {}){
 		let req = https.request(reqParam, (result: any) => {
 			result.setEncoding('utf-8');
-			result.on('error', (e: any) => {
-				console.log(e);
-				handleError(e);
-			});
 			let body = '';
 			result.on('data', (chunk: String) => {
 				body += chunk;
@@ -61,8 +57,12 @@ export abstract class Utils{
 					let data = JSON.parse(body);
 					cb(data);
 				}catch(e){
+					console.log(body);
 					console.log(e);
 				}
+			}).on('error', (e: any) => {
+				console.log(e);
+				handleError(e);
 			});
 		});
 		if(reqBody){
