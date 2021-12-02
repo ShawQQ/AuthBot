@@ -9,15 +9,15 @@ export class PostgresDatabase implements Database{
 	constructor(){
 		this._connected = false;
 		this._client = new Client({
-			user: process.env.DB_USER,
-			host: process.env.DB_HOST,
-			database: process.env.DB_NAME as unknown as string,
-			password: process.env.DB_PASSWORD as unknown as string,
-			port: process.env.DB_PORT as unknown as number
-			// connectionString: process.env.DATABASE_URL,
-			// ssl: {
-			// 	rejectUnauthorized: false
-			// }
+			// user: process.env.DB_USER,
+			// host: process.env.DB_HOST,
+			// database: process.env.DB_NAME as unknown as string,
+			// password: process.env.DB_PASSWORD as unknown as string,
+			// port: process.env.DB_PORT as unknown as number
+			connectionString: process.env.DATABASE_URL,
+			ssl: {
+				rejectUnauthorized: false
+			}
 		});
 	}
 
