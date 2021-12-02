@@ -33,7 +33,7 @@ export class PostgresDatabase implements Database{
 		if(!await this.userExist(edit)){
 			await this._client.query(
 				`INSERT INTO "user" 
-					(twitch_id, telegram_id, is_vip)
+					(twitch_id, telegram_id, is_vip, telegram_handle)
 					VALUES 
 					($1, $2, $3);
 				`, [edit.twitch_id, edit.telegram_id, edit.is_vip]);
@@ -43,8 +43,8 @@ export class PostgresDatabase implements Database{
 	public async delete(user: UserEdit){
 		await this.checkConnection();
 		await this._client.query(
-			'DELETE FROM "user" WHERE twitch_id = $1 AND telegram_id = $2;'
-		, [user.twitch_id, user.telegram_id])
+			'DELETE FROM "user" telegram_id = $2;'
+		, [user.telegram_id])
 	}
 
 	public async open(){
@@ -65,6 +65,7 @@ export class PostgresDatabase implements Database{
 				id SERIAL NOT NULL PRIMARY KEY,  
 				twitch_id int UNIQUE,
 				telegram_id int UNIQUE,
+				telegram_handle varchar(255),
 				is_vip BOOLEAN
 			);
 			CREATE TABLE IF NOT EXISTS "access_token" (
