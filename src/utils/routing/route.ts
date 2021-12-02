@@ -8,12 +8,22 @@ const express = require('express');
 const app = express();
 
 class BaseRouter implements Router{
-	private telegram: Telegram;
-	private twitch: Twitch;
+	private _telegram: Telegram;
+	private _twitch: Twitch;
 
 	constructor(){
-		this.telegram = new Telegram();
-		this.twitch = new Twitch();
+		this._telegram = new Telegram();
+		this._twitch = new Twitch();
+	}
+
+	
+	public get telegram() : Telegram {
+		return this._telegram;
+	}
+
+	
+	public get twitch() : Twitch {
+		return this._twitch;
 	}
 	
 	public setRoute(){

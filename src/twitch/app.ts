@@ -1,4 +1,4 @@
-import { Telegram } from "../telegram/app";
+import { RouterFactory } from "../utils/routing/route";
 import { DatabaseFactory } from "../utils/database/db";
 import { AccessToken, Database } from "../utils/database/interfaces";
 import { RequestParameter } from "../utils/interface/common_interface";
@@ -74,7 +74,13 @@ export class Twitch{
 					path: "/oauth2/token?"+ queryParam,
 					method: 'POST',
 				}
-				Utils.send(authParam, {}, (data: any) => this.checkUserSub(data.access_token));
+				Utils.send(authParam, {}, (data: any) => {
+					let access_token: AccessToken = {
+						access: data.access_token,
+						refresh: data.refresh_token
+					};
+					this.checkUserSub(access_token);
+				});
 			}catch(e){
 				console.log(e);
 			}
@@ -181,13 +187,13 @@ export class Twitch{
 			headers: {
 				"Content-Type": "application/json",
 				"Client-ID": this.twitch_const.client_id,
-				"Authorization": "Bearer "+ access_token
+				"Authorization": "Bearer "+ access_token.access
 			},
 			method: "GET"
 		};
 		Utils.send(reqParam, {}, (data: any) => {
-			const telegram: Telegram = new Telegram();
-			telegram.finalize(data.error !== undefined, user_id);
+			console.log(data);
+			RouterFactory.getRouter().telegram.finalize(data.error !== undefined, user_id)
 		});
 	}
 	

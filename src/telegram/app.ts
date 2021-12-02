@@ -46,7 +46,6 @@ export class Telegram{
 		res.send(html);
 	}
 
-	
 	public async finalize(error: boolean, twitch_id: number){
 		if(error){
 			let msgOpt = {
@@ -61,7 +60,7 @@ export class Telegram{
 				telegram_id: this.user_id,
 				is_vip: false
 			});
-			console.log("Utente inserito: Twitch: " + twitch_id + "Telegram: " + this.user_id);
+			console.log("Utente inserito: Twitch: " + twitch_id + " Telegram: " + this.user_id);
 		}
 	}
 	
@@ -76,7 +75,7 @@ export class Telegram{
 		};
 		for(const id of ids){
 			let opt = {
-				chat_id: this.chat_id,
+				chat_id: this.group_id,
 				user_id: id,
 				until_date: Date.now() + 1 * 100 * 600,
 				revoke_messages: false
@@ -129,6 +128,7 @@ export class Telegram{
 			chat_id: this.group_id,
 			member_limit: 1
 		};
+		console.log(this.group_id);
 		Utils.send(opt, groupBody, (data) => {
 			let messageOpt = {
 				chat_id: this.chat_id,
@@ -137,7 +137,6 @@ export class Telegram{
 			this.sendMessage(messageOpt);
 		});
 	}
-
 	
 	private sendMessage(opt: any){
 		let reqOpt: RequestParameter = {
