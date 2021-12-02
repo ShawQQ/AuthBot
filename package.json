@@ -4,6 +4,8 @@
   "description": "prova",
   "main": "index.js",
   "scripts": {
+	"start": "node dist/build-bundle.js",
+	"postinstall": "npx webpack",
     "test": "node test.js",
     "build": "webpack"
   },
