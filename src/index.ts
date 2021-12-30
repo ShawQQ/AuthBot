@@ -13,6 +13,7 @@ db.open().then(async () => {
 	router.setRoute();
 
 	cron.schedule('0 0 1 * *', () => {
+		console.log("Autoban");
 		Utils.autoban();
 	});
 });
