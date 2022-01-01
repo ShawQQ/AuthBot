@@ -87,6 +87,7 @@ export abstract class Utils{
 			let toBan = [];
 			
 			for(const current of currentUser){
+				console.log("Utente: "+current.telegram_id);
 				let ban = true;
 				for(const id of users){
 					if(id == current.twitch_id){
@@ -95,6 +96,7 @@ export abstract class Utils{
 					}
 				}
 				if(ban){
+					console.log("Utente trovato: "+current.telegram_id);
 					toBan.push(current.telegram_id);
 				}
 			}
