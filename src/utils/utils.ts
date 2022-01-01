@@ -76,6 +76,7 @@ export abstract class Utils{
 	}
 
 	public static async autoban(){
+		console.log("Inizio ban gruppo telegram");
 		const telegram: Telegram = new Telegram();
 		const twitch: Twitch = new Twitch();
 		const db: Database = DatabaseFactory.getDatabase();
@@ -103,5 +104,6 @@ export abstract class Utils{
 		}catch(e){
 			console.error("Autoban error: "+e);
 		}
+		console.log("Fine ban gruppo telegram");
 	}
 }

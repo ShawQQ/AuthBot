@@ -14,8 +14,6 @@ db.open().then(async () => {
 	router.setRoute();
 
 	cron.schedule('*/5 * * * *', () => {
-		console.log("Inizio ban gruppo telegram");
 		Utils.autoban();
-		console.log("Fine ban gruppo telegram");
 	});
 });
