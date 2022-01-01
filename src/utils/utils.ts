@@ -83,7 +83,9 @@ export abstract class Utils{
 
 		try{
 			let users = await twitch.getCurrentSubs();
+			console.log("Utenti trovati");
 			let currentUser = await db.getUsers();
+			console.log("Stramer trovato");
 			let toBan = [];
 			
 			for(const current of currentUser){
