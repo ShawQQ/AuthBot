@@ -171,6 +171,7 @@ export class Twitch{
 		let token: AccessToken = await this.db.getCurrentToken();
 		if(token === undefined) throw new Error("Token non disponibile");
 		let broadcaster_id: number = await this.getUserFromToken(token);
+		console.log("Broadcaster: "+broadcaster_id);
 		return await this._getCurrentSubs('', token, broadcaster_id);
 	}
 
@@ -265,7 +266,9 @@ export class Twitch{
 		for(const user of data.data){
 			users.push(user.user_id);
 		}
-		if(data.data.length !== 0){
+		console.log("Utenti: "+users);
+		console.log("Twitch response: "+data);
+		if(data !== undefined && data.data !== undefined && data.data.length !== 0){
 			users = users.concat(await this._getCurrentSubs(data.pagination.cursor, token, broadcaster_id));
 		}
 		return users;
