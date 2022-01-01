@@ -13,7 +13,7 @@ db.open().then(async () => {
 	await db.createBaseTable();
 	router.setRoute();
 
-	cron.schedule('*/5 * * * *', () => {
+	cron.schedule('*0 0 1 * *', () => {
 		Utils.autoban();
 	});
 });
