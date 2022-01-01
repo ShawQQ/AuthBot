@@ -242,10 +242,10 @@ export class Twitch{
 		let queryParam = {
 			broadcaster_id: broadcaster_id,
 			first: 100,
-			path: ''
+			after: ''
 		};
 		if(pagination){
-			queryParam.path = pagination;
+			queryParam.after = pagination;
 		}
 		var authParam = {
 			host: "api.twitch.tv",
@@ -266,9 +266,7 @@ export class Twitch{
 		for(const user of data.data){
 			users.push(user.user_id);
 		}
-		console.log("Utenti: "+users);
-		console.log("Twitch response: "+data);
-		if(data !== undefined && data.data !== undefined && data.data.length !== 0){
+		if(data.data.length !== 0){
 			users = users.concat(await this._getCurrentSubs(data.pagination.cursor, token, broadcaster_id));
 		}
 		return users;
