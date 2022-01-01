@@ -104,6 +104,13 @@ export abstract class Utils{
 			}
 			console.log(toBan);
 			telegram.banUsers(toBan);
+			for(const row of toBan){
+				await db.delete({
+					twitch_id: 0,
+					telegram_id: row.telegram_id,
+					is_vip: false
+				});
+			}
 			await db.close();
 		}catch(e){
 			console.error("Autoban error: "+e);
