@@ -18,7 +18,7 @@ export class Telegram{
 		req.on('data', (d: string) => {
 			try{
 				let data = JSON.parse(d);
-				this.sendStart(data);
+				this.getAction(data);
 			}catch(e){
 				console.log(e);
 			}
@@ -85,17 +85,6 @@ export class Telegram{
 	}
 
 	private sendStart(data: any){
-		if(data.message === undefined){
-			console.log(data);
-			return;
-		}
-		if(data.message.chat.type !== 'private'){
-			console.log(data.message.chat.id);
-			return;
-		}
-		if(data.message.text !== '/start') return;
-		this.chat_id = data.message.chat.id;
-		this.user_id = data.message.from.id;
 		let oauthParam = Utils.getTwitchConst().oauth2_param;
 		let opt = {
 			chat_id: data.message.chat.id,
@@ -168,5 +157,32 @@ export class Telegram{
 			}
 		};
 		Utils.send(reqOpt, opt);
+	}
+
+	private getAction(data: any){
+		this.chat_id = data.message.chat.id;
+		this.user_id = data.message.from.id;
+		if(data.message === undefined){
+			console.log(data);
+			return;
+		}
+		switch(data.message.text){
+			case '/start':
+				this.sendStart(data);
+				break;
+			default:
+				let banned_words = require('../telegram/utils/bannedword.json');
+				for(let word of banned_words.delete){
+					if(data.message.text.includes(word)){
+						console.log(data.message);
+						this.deleteMessage({
+							chat_id: data.message.chat.id,
+							message_id: data.message.message_id
+						});
+						break;
+					}
+				}
+				break;
+		}
 	}
 }
