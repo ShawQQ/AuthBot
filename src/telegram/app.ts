@@ -180,7 +180,7 @@ export class Telegram{
 				break;
 			default:
 				for(let word of banned_words.delete){
-					if(data.message.text.includes(word)){
+					if(data.message.text.toLowerCase().includes(word)){
 						console.log(data.message);
 						this.deleteMessage({
 							chat_id: data.message.chat.id,
