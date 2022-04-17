@@ -173,10 +173,15 @@ export class Telegram{
 				break;
 			case '/parolebrutte':
 				console.log("Ok");
-				this.sendMessage({
-					chat_id: data.message.from.id,
-					text: "Per garantire un clima civile all'interno del gruppo i messaggi contenenti i seguenti termini verranno cancellati automaticamente: \n" + banned_words.delete.join("\n")
-				});
+				try{
+					this.sendMessage({
+						chat_id: data.message.from.id,
+						text: "Per garantire un clima civile all'interno del gruppo i messaggi contenenti i seguenti termini verranno cancellati automaticamente: \n" + banned_words.delete.join("\n")
+					});
+				}catch(e){
+					console.log(e);
+				}
+				
 				break;
 			default:
 				for(let word of banned_words.delete){
