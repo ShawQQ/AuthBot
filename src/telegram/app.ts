@@ -123,11 +123,11 @@ export class Telegram{
 				chat_id: this.chat_id,
 				text: data.result.invite_link
 			};
-			this.sendMessage(messageOpt);
+			this.sendMessage(messageOpt, true);
 		});
 	}
 	
-	private sendMessage(opt: any){
+	private sendMessage(opt: any, deleteAfterSend: boolean = false){
 		let reqOpt: RequestParameter = {
 			host: this.telegram_const.api_host,
 			path:this.telegram_const.base_url+'/sendMessage',
@@ -137,13 +137,15 @@ export class Telegram{
 			}
 		};
 		Utils.send(reqOpt, opt, (data) => {
-			setTimeout(() => {
-				let opt = {
-					chat_id: data.result.chat.id,
-					message_id: data.result.message_id
-				};
-				this.deleteMessage(opt);
-			}, 30000);
+			if(deleteAfterSend){
+				setTimeout(() => {
+					let opt = {
+						chat_id: data.result.chat.id,
+						message_id: data.result.message_id
+					};
+					this.deleteMessage(opt);
+				}, 30000);
+			}
 		});
 	}
 
@@ -185,6 +187,7 @@ export class Telegram{
 				break;
 			default:
 				for(let word of banned_words.delete){
+					if(data.message.text === undefined) return;
 					if(data.message.text.toLowerCase().includes(word)){
 						console.log(data.message);
 						this.deleteMessage({
