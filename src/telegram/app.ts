@@ -166,12 +166,19 @@ export class Telegram{
 			console.log(data);
 			return;
 		}
+		let banned_words = require('../telegram/utils/bannedword.json');
 		switch(data.message.text){
 			case '/start':
 				this.sendStart(data);
 				break;
+			case '/parolebrutte':
+				console.log("Ok");
+				this.sendMessage({
+					chat_id: data.message.from.id,
+					text: "Per garantire un clima civile all'interno del gruppo i messaggi contenenti i seguenti termini verranno cancellati automaticamente: \n" + banned_words.delete.join("\n")
+				});
+				break;
 			default:
-				let banned_words = require('../telegram/utils/bannedword.json');
 				for(let word of banned_words.delete){
 					if(data.message.text.includes(word)){
 						console.log(data.message);
