@@ -33,7 +33,7 @@ export class PostgresDatabase implements Database{
 		if(!await this.userExist(edit)){
 			await this._client.query(
 				`INSERT INTO "user" 
-					(twitch_id, telegram_id, is_vip, telegram_handle)
+					(twitch_id, telegram_id, is_vip)
 					VALUES 
 					($1, $2, $3);
 				`, [edit.twitch_id, edit.telegram_id, edit.is_vip]);
