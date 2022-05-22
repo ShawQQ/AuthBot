@@ -1,15 +1,25 @@
-import { ApiRequest } from './types/web';
+import { ApiRequest } from "./types/web";
 
-export async function apiCall<T>(opt: ApiRequest): Promise<T>{
+/**
+* Utility for api call
+* @param {ApiRequest} opt Api request options 
+* @return {Promise<T>} api result as T
+*/
+export async function apiCall<T>(opt: ApiRequest): Promise<T> {
 	const response = await fetch(opt.url, {
 		method: opt.method,
 		headers: opt?.headers,
-		body: JSON.stringify(opt?.data)
+		body: JSON.stringify(opt?.data),
 	});
 	
 	return (await response.json()) as T;
 }
 
+/**
+* Generate url query from a string
+* @param {any} queryArg arguments of the query
+* @return {string} url-encoded query
+*/
 export function generateQuery(queryArg: any): string {
 	return new URLSearchParams(queryArg).toString();
 }
