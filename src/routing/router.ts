@@ -82,7 +82,7 @@ export function setRoute(): void {
 			msg.text = "Non risulti abbonato";
 		}
 		telegram.sendMessage(msg);
-		const html = require("./views/auth.html");
+		const html = require("./views/auth.html").html;
 		res.send(html);
 	});
 }
