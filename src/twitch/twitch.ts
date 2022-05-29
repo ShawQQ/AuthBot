@@ -38,7 +38,7 @@ export class TwitchInstance implements Twitch {
 			headers: {
 				"Content-Type": "application/json",
 				"Client-ID": TwitchInstance.CLIENT_ID,
-				Authorization: "Bearer " + user.token,
+				Authorization: "Bearer " + user.access_token,
 			},
 			method: "GET",
 		};
@@ -120,7 +120,7 @@ export class TwitchInstance implements Twitch {
 				method: "GET",
 				headers: {
 					"Client-ID": TwitchInstance.CLIENT_ID,
-					Authorization: "Bearer " + token.token,
+					Authorization: "Bearer " + token.access_token,
 				},
 			};
 			const data: TwitchSub = await apiCall<TwitchSub>(opt);
@@ -145,7 +145,7 @@ export class TwitchInstance implements Twitch {
 		if (oldToken === undefined) throw new Error("Token non disponibile");
 		const queryParam: String = generateQuery({
 			grant_type: "refresh_token",
-			refresh_token: oldToken.refresh,
+			refresh_token: oldToken.refresh_token,
 			client_id: TwitchInstance.CLIENT_ID,
 			client_secret: TwitchInstance.CLIENT_SECRET,
 		});
@@ -154,11 +154,11 @@ export class TwitchInstance implements Twitch {
 			method: "POST",
 		});
 		const newToken: UserAuthToken = {
-			token: result.token,
+			access_token: result.access_token,
 			expires: Date.now(),
 			creationDate: Date.now(),
 		};
-		TwitchInstance.db.updateAccessToken(result);
+		await TwitchInstance.db.updateAccessToken(result);
 		return newToken;
 	}
 	
@@ -183,7 +183,7 @@ export class TwitchInstance implements Twitch {
 			headers: {
 				"Content-Type": "application/json",
 				"Client-ID": TwitchInstance.CLIENT_ID,
-				Authorization: "Bearer " + userToken.token,
+				Authorization: "Bearer " + userToken.access_token,
 			},
 		};
 		const result = await apiCall<any>(opt);

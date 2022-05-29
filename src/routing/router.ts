@@ -6,12 +6,12 @@ import {
 	TelegramBot,
 	UpdateContext,
 	InviteLink,
+	Chat,
 } from "../telegram/types/telegram";
 import { TelegramBotInstance } from "../telegram/telegram";
 import { Twitch } from "../twitch/types/twitch";
 import { TwitchInstance } from "../twitch/twitch";
 import { DatabaseFactory } from "../utils/database/db";
-require("dotenv");
 
 const app = express();
 const url = require("url");
@@ -24,7 +24,7 @@ export async function setWebHook(): Promise<void> {
 		url:
 		"api.telegram.org/bot" +
 		process.env.TELEGRAM_TOKEN +
-		"setWebhook?url=https://" +
+		"/setWebhook?url=" +
 		process.env.URL +
 		"/" +
 		process.env.TELEGRAM_TOKEN +
@@ -40,7 +40,7 @@ export async function setWebHook(): Promise<void> {
 export function setRoute(): void {
 	app.use(express.json());
 	app.listen(process.env.PORT, () => {
-		console.log("Bot started");
+		console.log("Bot started on port:" + process.env.PORT);
 	});
 	
 	app.post("/" + process.env.TELEGRAM_TOKEN + "/getUpdate", (req, res) => {
@@ -53,10 +53,14 @@ export function setRoute(): void {
 	});
 	app.get("/auth", async (req, res) => {
 		const data = url.parse(req.url, true).query;
+		if(!data.state){
+			throw new Error("Missing Telegram Chat ID");
+		}
 		const twitch: Twitch = new TwitchInstance();
 		const telegram: TelegramBot = new TelegramBotInstance();
+		const chat: Chat = await telegram.getChat(data.state);
 		const msg: ChatMessageRequest = {
-			chat_id: data.chat_id,
+			chat_id: chat.id,
 			text: "",
 		};
 		const authResult = await twitch.completeAuth(data.code);
@@ -66,12 +70,12 @@ export function setRoute(): void {
 				expire_date: 0,
 				member_limit: 1,
 			});
-			msg.text = inviteLink.invite_link;
+			msg.text = inviteLink.result.invite_link;
 			const db = DatabaseFactory.getDatabase();
 			db.insert({
 				twitch_id: authResult.twitch_id,
-				telegram_id: data.chat_id,
-				telegram_handle: "",
+				telegram_id: chat.id,
+				telegram_handle: chat.username,
 				is_vip: false,
 			});
 		} else {
@@ -79,6 +83,6 @@ export function setRoute(): void {
 		}
 		telegram.sendMessage(msg);
 		const html = require("./views/auth.html");
-		res.sendFile(html);
+		res.send(html);
 	});
 }

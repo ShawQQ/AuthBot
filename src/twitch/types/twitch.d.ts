@@ -1,12 +1,12 @@
 export type UserAuthToken = {
   creationDate: number;
   expires: number;
-  token: string;
+  access_token: string;
 };
 
 export type AdminToken = {
-  token: string;
-  refresh: string;
+  access_token: string;
+  refresh_token: string;
 };
 
 export type TwitchUser = {
