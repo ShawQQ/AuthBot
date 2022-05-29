@@ -150,7 +150,6 @@ export class TelegramBotInstance implements TelegramBot {
 			},
 		}
 		const result = await apiCall<any>(opt);
-		console.log(result);
 		return result.result;
 	}
 }
