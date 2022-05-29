@@ -1,4 +1,5 @@
 const path = require('path');
+const Dotenv = require('dotenv-webpack');
 const { IgnorePlugin } = require('webpack');
 
 module.exports = {
@@ -18,7 +19,8 @@ module.exports = {
 	plugins: [
 		new IgnorePlugin({
 			resourceRegExp: /^pg-native$/,
-		})
+		}),
+		new Dotenv()
 	],
 	module: {
 		rules: [
