@@ -145,9 +145,12 @@ export class TelegramBotInstance implements TelegramBot {
 			headers: {
 				"Content-Type": "application/json",
 			},
-			data: chatId,
+			data: {
+				chat_id: chatId
+			},
 		}
-
-		return await apiCall<Chat>(opt);
+		const result = await apiCall<any>(opt);
+		console.log(result);
+		return result.result;
 	}
 }
