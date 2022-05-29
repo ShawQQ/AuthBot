@@ -1,7 +1,6 @@
 import { Client } from "pg";
 import { Database, UserEdit } from "./interfaces";
 import { AdminToken } from "../../twitch/types/twitch";
-require("dotenv");
 
 /**
 * Postgres implementation of the Database interface
@@ -15,7 +14,6 @@ export class PostgresDatabase implements Database {
 	 */
 	constructor() {
 		this._connected = false;
-		console.log(process.env);
 		this._client = new Client({
 			user: process.env.DB_USER as unknown as string,
 			host: process.env.DB_HOST as unknown as string,
@@ -108,8 +106,8 @@ export class PostgresDatabase implements Database {
 		const result = await this._client.query('SELECT * FROM "access_token";');
 		if (result.rowCount == 0) return undefined;
 		return {
-			token: result.rows[0].access_token,
-			refresh: result.rows[0].refresh_token,
+			access_token: result.rows[0].access_token,
+			refresh_token: result.rows[0].refresh_token,
 		};
 	}
 		
@@ -122,7 +120,7 @@ export class PostgresDatabase implements Database {
 		await this._client.query(`DELETE FROM "access_token";`);
 		await this._client.query(
 			`INSERT INTO "access_token" (access_token, refresh_token) VALUES ($1, $2)`,
-			[token.token, token.refresh]
+			[token.access_token, token.refresh_token]
 		);
 	}
 	
