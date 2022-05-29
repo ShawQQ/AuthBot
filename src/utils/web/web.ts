@@ -1,3 +1,4 @@
+import fetch from 'node-fetch';
 import { ApiRequest } from "./types/web";
 
 /**
@@ -6,6 +7,9 @@ import { ApiRequest } from "./types/web";
 * @return {Promise<T>} api result as T
 */
 export async function apiCall<T>(opt: ApiRequest): Promise<T> {
+	if(!opt.url.startsWith("https://")){
+		opt.url = "https://" + opt.url;
+	}
 	const response = await fetch(opt.url, {
 		method: opt.method,
 		headers: opt?.headers,
