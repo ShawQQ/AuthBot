@@ -12,10 +12,12 @@ import { TelegramBotInstance } from "../telegram/telegram";
 import { Twitch } from "../twitch/types/twitch";
 import { TwitchInstance } from "../twitch/twitch";
 import { DatabaseFactory } from "../utils/database/db";
+import { Logger } from "tslog";
+import { UserEdit } from "src/utils/database/interfaces";
 
 const app = express();
 const url = require("url");
-
+const log: Logger = new Logger();
 /**
 * Start telegram webhook
 */
@@ -39,6 +41,14 @@ export async function setWebHook(): Promise<void> {
  */
 export function setRoute(): void {
 	app.use(express.json());
+	app.use(function(err, req, res, next){
+		log.error("Error data: ", {
+			err: err,
+			req: req,
+			res: res
+		});
+		res.status(500).send("Error");
+	});
 	app.listen(process.env.PORT, () => {
 		console.log("Bot started on port:" + process.env.PORT);
 	});
@@ -72,12 +82,14 @@ export function setRoute(): void {
 			});
 			msg.text = inviteLink.result.invite_link;
 			const db = DatabaseFactory.getDatabase();
-			db.insert({
+			const user: UserEdit = {
 				twitch_id: authResult.twitch_id,
 				telegram_id: chat.id,
 				telegram_handle: chat.username,
 				is_vip: false,
-			});
+			};
+			log.info("New user:", user);
+			db.insert(user);
 		} else {
 			msg.text = "Non risulti abbonato";
 		}

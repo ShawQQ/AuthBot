@@ -149,7 +149,9 @@ export class TelegramBotInstance implements TelegramBot {
 				chat_id: chatId
 			},
 		}
-		const result = await apiCall<any>(opt);
+		const result = await apiCall<{
+			result: Chat
+		}>(opt);
 		return result.result;
 	}
 }
