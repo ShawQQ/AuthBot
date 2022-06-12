@@ -47,6 +47,28 @@ export class PostgresDatabase implements Database {
 			);
 		}
 	}
+
+	/**
+	 * Update user data
+	 * @param edit User to update
+	 * @return {Promise<UserEdit>} The new user
+	 */
+	async update(edit: UserEdit): Promise<void> {
+		await this.checkConnection();
+		await this._client.query(
+			`
+				UPDATE "user"
+				SET
+					twitch_id = $1,
+					telegram_id = $2,
+					is_vip = $3,
+					telegram_handle = $4
+				WHERE telegram_id = $2
+			`,
+			[edit.twitch_id, edit.telegram_id, edit.is_vip, edit.telegram_handle]
+		);
+	}
+	
 	
 	/**
 	 * Delete a user

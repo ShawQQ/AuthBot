@@ -7,10 +7,11 @@ import {
 	InviteLink,
 	InviteLinkRequest,
 	Chat,
+	TelegramUser,
 } from "./types/telegram";
 import { TwitchInstance } from "../twitch/twitch";
 import { ApiRequest } from "../utils/web/types/web";
-import { apiCall } from "../utils/web/web";
+import { apiCall, generateQuery } from "../utils/web/web";
 
 /**
 * Implementations of core telegram functionality
@@ -153,5 +154,67 @@ export class TelegramBotInstance implements TelegramBot {
 			result: Chat
 		}>(opt);
 		return result.result;
+	}
+
+	async userInGroup(userId: number): Promise<boolean>{
+		const opt: ApiRequest = {
+			url: TelegramBotInstance.TELEGRAM_URL + "/getChatMember",
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			data: {
+				chat_id: process.env.TELEGRAM_GROUP,
+				user_id: userId
+			},
+		}
+		const result = await apiCall<{
+			ok: boolean
+		}>(opt);
+		return result.ok;
+	}
+
+	async banUser(userId: number): Promise<void>{
+		const query = generateQuery({
+			chat_id: process.env.TELEGRAM_GROUP,
+			user_id: userId,
+			until_date: Date.now() + 1 * 100 * 600,
+			revoke_messages: false
+		});
+		const opt: ApiRequest = {
+			url: TelegramBotInstance.TELEGRAM_URL + "/banChatMember?" + query,
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+		}
+
+		await apiCall<any>(opt);
+	}
+
+	/**
+	 * Get the user data from the user id
+	 * @param {number} userId telegram user id
+	 * @returns {Promise<TelegramUser>} telegram user data
+	 */
+	async getUser(userId: number): Promise<TelegramUser>{
+		const opt: ApiRequest = {
+			url: TelegramBotInstance.TELEGRAM_URL + "/getChatMember",
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			data: {
+				chat_id: process.env.TELEGRAM_GROUP,
+				user_id: userId
+			},
+		}
+
+		const result = await apiCall<{
+			result: {
+				user: TelegramUser
+			}
+		}>(opt);
+		return result.result.user;
 	}
 }
