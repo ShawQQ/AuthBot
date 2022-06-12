@@ -1,11 +1,13 @@
 export interface TelegramBot {
-	chatId: number;
 	getUpdate(ctx: UpdateContext): void;
 	checkMessage(msg: ChatMessageResponse): boolean;
 	sendMessage(msg: ChatMessageRequest): void;
 	deleteMessage(msg: DeleteMessageRequest): void;
 	createInviteLink(data: InviteLinkRequest): Promise<InviteLink>;
-	getChat(chat_id: number): Promise<Chat>
+	getChat(chatId: number): Promise<Chat>;
+	userInGroup(userId: number): Promise<boolean>;
+	banUser(userId: number): Promise<void>;
+	getUser(userId: number): Promise<TelegramUser>;
 }
 
 export type UpdateContext = {
@@ -25,7 +27,13 @@ export type ChatMessageRequest = {
 	chat_id: number;
 	text: string;
 	reply_markup?: InlineKeyboardMarkup;
+	parse_mode?: MessageParseMode;
 };
+
+export enum MessageParseMode{
+	"MarkdownV2",
+	"HTML",
+}
 
 export type InlineKeyboardMarkup = {
 	inline_keyboard: Array<Array<InlineKeyboardButton>>;
@@ -57,3 +65,15 @@ export type InviteLink = {
 		invite_link: string;
 	}
 };
+
+export type TelegramUser = {
+	id: number;
+	is_bot: boolean;
+	first_name: string;
+	last_name?: string;
+	username?: string;
+	language_code?: string;
+	can_join_groups?: boolean;
+	can_read_all_group_messages?: boolean;
+	supports_inline_queries?: boolean;
+}

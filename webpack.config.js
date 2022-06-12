@@ -14,7 +14,7 @@ module.exports = {
 		filename: "build-bundle.js"
 	},
 	resolve: {
-		extensions: [".ts", ".tsx", ".js", ".html"],
+		extensions: [".ts", ".js"],
 	},
 	plugins: [
 		new IgnorePlugin({
