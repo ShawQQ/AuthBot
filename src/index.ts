@@ -13,21 +13,21 @@ async function start() {
   await db.createBaseTable();
   await setWebHook();
   setRoute();
-  const cron = new TelegramCron();
-  new CronJob(
-	'0 0 1 * *',
-	cron.banWarning,
-	null,
-	true,
-	'Europe/Rome'
-  );
-  new CronJob(
-	'0 0 2 * *',
-	cron.autoban,
-	null,
-	true,
-	'Europe/Rome'
-  );
+//   const cron = new TelegramCron();
+//   new CronJob(
+// 	'0 0 1 * *',
+// 	cron.banWarning,
+// 	null,
+// 	true,
+// 	'Europe/Rome'
+//   );
+//   new CronJob(
+// 	'0 0 2 * *',
+// 	cron.autoban,
+// 	null,
+// 	true,
+// 	'Europe/Rome'
+//   );
 }
 
 try{
