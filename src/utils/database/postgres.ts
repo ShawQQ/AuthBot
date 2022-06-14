@@ -180,7 +180,7 @@ export class PostgresDatabase implements Database {
 	*/
 	private async userExist(user: UserEdit): Promise<boolean> {
 		const result = await this._client.query(
-			'SELECT * from "user" WHERE twitch_id = $1 AND telegram_id = $2;',
+			'SELECT * from "user" WHERE twitch_id = $1 OR telegram_id = $2;',
 			[user.twitch_id, user.telegram_id]
 		);
 		return result.rowCount > 0;
