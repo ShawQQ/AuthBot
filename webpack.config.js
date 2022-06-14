@@ -20,7 +20,9 @@ module.exports = {
 		new IgnorePlugin({
 			resourceRegExp: /^pg-native$/,
 		}),
-		new Dotenv()
+		new Dotenv({
+			systemvars: true
+		})
 	],
 	module: {
 		rules: [
