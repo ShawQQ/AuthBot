@@ -12,7 +12,9 @@ import {
 import { TwitchInstance } from "../twitch/twitch";
 import { ApiRequest } from "../utils/web/types/web";
 import { apiCall, generateQuery } from "../utils/web/web";
+import { Logger } from "tslog";
 
+const log: Logger = new Logger();
 /**
 * Implementations of core telegram functionality
 */
@@ -30,6 +32,7 @@ export class TelegramBotInstance implements TelegramBot {
 	getUpdate(ctx: UpdateContext): void {
 		const msg: ChatMessageResponse = ctx.message ?? ctx.edited_message;
 		if (!!msg) {
+			log.info(msg);
 			if (this.checkMessage(msg)) return;
 			let botMsg: ChatMessageRequest = null;
 			switch (msg.text) {
