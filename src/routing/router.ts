@@ -41,17 +41,10 @@ export async function setWebHook(): Promise<void> {
  */
 export function setRoute(): void {
 	app.use(express.json());
-	app.use(function(err, req, res, next){
-		log.error("Error data: ", {
-			err: err,
-			req: req,
-			res: res
-		});
-		res.status(500).send("Error");
-	});
 	app.post("/" + process.env.TELEGRAM_TOKEN + "/getUpdate", (req, res) => {
 		const telegram: TelegramBot = new TelegramBotInstance();
 		const ctx: UpdateContext = req.body;
+		res.sendStatus(200);
 		telegram.getUpdate(ctx);
 	});
 	app.post("/completeAdminAuth", (req, res) => {
