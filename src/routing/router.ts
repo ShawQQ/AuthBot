@@ -26,7 +26,7 @@ export async function setWebHook(): Promise<void> {
 		url:
 		"api.telegram.org/bot" +
 		process.env.TELEGRAM_TOKEN +
-		"/setWebhook?url=" +
+		"/setWebhook?url=https://" +
 		process.env.URL +
 		"/" +
 		process.env.TELEGRAM_TOKEN +
@@ -49,10 +49,6 @@ export function setRoute(): void {
 		});
 		res.status(500).send("Error");
 	});
-	app.listen(process.env.PORT, () => {
-		console.log("Bot started on port:" + process.env.PORT);
-	});
-	
 	app.post("/" + process.env.TELEGRAM_TOKEN + "/getUpdate", (req, res) => {
 		const telegram: TelegramBot = new TelegramBotInstance();
 		const ctx: UpdateContext = req.body;
@@ -96,5 +92,9 @@ export function setRoute(): void {
 		telegram.sendMessage(msg);
 		const html = require("./views/auth.html").html;
 		res.send(html);
+	});
+
+	app.listen(process.env.PORT, () => {
+		console.log("Bot started on port:" + process.env.PORT);
 	});
 }

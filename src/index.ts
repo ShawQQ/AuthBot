@@ -29,9 +29,4 @@ async function start() {
 // 	'Europe/Rome'
 //   );
 }
-
-try{
-	start();
-}catch(e){
-	log.error("Bot error", e);
-}
+start();
