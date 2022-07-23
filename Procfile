@@ -1,1 +1,1 @@
-web: node dist/build-bundle.js -- --port 443
+web: node dist/build-bundle.js
