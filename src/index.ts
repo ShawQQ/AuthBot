@@ -1,19 +1,32 @@
+import { setWebHook, setRoute } from "./routing/router";
 import { DatabaseFactory } from "./utils/database/db";
-import { Database } from "./utils/database/interfaces";
-import { RouterFactory } from "./utils/routing/route";
-import { Router } from "./utils/routing/router";
-import { Utils } from "./utils/utils";
-import 'dotenv/config';
-
-var cron = require('node-cron');
-let db: Database = DatabaseFactory.getDatabase();
-let router: Router = RouterFactory.getRouter();
-
-db.open().then(async () => {
-	await db.createBaseTable();
-	router.setRoute();
-
-	cron.schedule('*0 0 1 * *', () => {
-		Utils.autoban();
-	});
-});
+import { Logger } from 'tslog';
+import { TelegramCron } from './utils/cron/telegramCron';
+const CronJob = require('cron').CronJob;
+const db = DatabaseFactory.getDatabase();
+const log: Logger = new Logger();
+/**
+ * Start the application
+ */
+async function start() {
+  await db.open();
+  await db.createBaseTable();
+  await setWebHook();
+  setRoute();
+//   const cron = new TelegramCron();
+//   new CronJob(
+// 	'0 0 1 * *',
+// 	cron.banWarning,
+// 	null,
+// 	true,
+// 	'Europe/Rome'
+//   );
+//   new CronJob(
+// 	'0 0 2 * *',
+// 	cron.autoban,
+// 	null,
+// 	true,
+// 	'Europe/Rome'
+//   );
+}
+start();

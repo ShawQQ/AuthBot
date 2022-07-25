@@ -1,4 +1,5 @@
 const path = require('path');
+const Dotenv = require('dotenv-webpack');
 const { IgnorePlugin } = require('webpack');
 
 module.exports = {
@@ -13,11 +14,14 @@ module.exports = {
 		filename: "build-bundle.js"
 	},
 	resolve: {
-		extensions: [".ts", ".tsx", ".js", ".html"],
+		extensions: [".ts", ".js"],
 	},
 	plugins: [
 		new IgnorePlugin({
 			resourceRegExp: /^pg-native$/,
+		}),
+		new Dotenv({
+			systemvars: true
 		})
 	],
 	module: {
