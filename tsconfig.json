@@ -8,8 +8,8 @@
 		"experimentalDecorators": true,
 		"moduleResolution": "node",
 		"importHelpers": true,
-		"target": "es2015",
-		"module": "ES2015",
+		"target": "es2017",
+		"module": "esnext",
 		"lib": [
 			"es2018",
 			"dom"
