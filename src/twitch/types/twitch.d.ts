@@ -11,13 +11,13 @@ export type AdminToken = {
 
 export type TwitchUser = {
   data?: Array<{
-    id: number;
+    id: BigInt;
   }>;
 };
 
 export type TwitchSub = {
   data?: Array<{
-    user_id: number;
+    user_id: BigInt;
   }>;
   pagination?: {
     cursor: string;
@@ -26,12 +26,12 @@ export type TwitchSub = {
 
 export type AuthResult = {
   is_sub: boolean;
-  twitch_id: number;
+  twitch_id: BigInt;
 };
 
 export interface Twitch {
-  getUser(user: UserAuthToken): Promise<number>;
-  getCurrentSubs(): Promise<Array<number>>;
+  getUser(user: UserAuthToken): Promise<BigInt>;
+  getCurrentSubs(): Promise<Array<BigInt>>;
   completeAuth(code: string): Promise<AuthResult>;
   adminAuth(): void;
   confirmAdminAuth(): void;

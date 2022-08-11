@@ -4,27 +4,27 @@ export interface TelegramBot {
 	sendMessage(msg: ChatMessageRequest): void;
 	deleteMessage(msg: DeleteMessageRequest): void;
 	createInviteLink(data: InviteLinkRequest): Promise<InviteLink>;
-	getChat(chatId: number): Promise<Chat>;
-	userInGroup(userId: number): Promise<boolean>;
-	banUser(userId: number): Promise<void>;
-	getUser(userId: number): Promise<TelegramUser>;
+	getChat(chatId: BigInt): Promise<Chat>;
+	userInGroup(userId: BigInt): Promise<boolean>;
+	banUser(userId: BigInt): Promise<void>;
+	getUser(userId: BigInt): Promise<TelegramUser>;
 }
 
 export type UpdateContext = {
-	update_id: number;
+	update_id: BigInt;
 	message?: ChatMessageResponse;
 	edited_message?: ChatMessageResponse;
 };
 
 export type ChatMessageResponse = {
-	message_id: number;
+	message_id: BigInt;
 	date: number;
 	text?: string;
 	chat?: Chat;
 };
 
 export type ChatMessageRequest = {
-	chat_id: number;
+	chat_id: BigInt;
 	text: string;
 	reply_markup?: InlineKeyboardMarkup;
 	parse_mode?: MessageParseMode;
@@ -45,17 +45,17 @@ export type InlineKeyboardButton = {
 };
 
 export type Chat = {
-	id: number;
+	id: BigInt;
 	username: string;
 };
 
 export type DeleteMessageRequest = {
-	chat_id: number;
-	message_id: number;
+	chat_id: BigInt;
+	message_id: BigInt;
 };
 
 export type InviteLinkRequest = {
-	chat_id: number;
+	chat_id: BigInt;
 	expire_date: number;
 	member_limit: number;
 };
@@ -67,7 +67,7 @@ export type InviteLink = {
 };
 
 export type TelegramUser = {
-	id: number;
+	id: BigInt;
 	is_bot: boolean;
 	first_name: string;
 	last_name?: string;

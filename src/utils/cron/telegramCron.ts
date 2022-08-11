@@ -44,7 +44,7 @@ export class TelegramCron{
 			msg += "@"+user.telegram_handle;
 		}
 		this.telegram.sendMessage({
-			chat_id: process.env.TELEGRAM_GROUP as unknown as number,
+			chat_id: process.env.TELEGRAM_GROUP as unknown as BigInt,
 			text: msg,
 			parse_mode: MessageParseMode.MarkdownV2
 		});
@@ -65,7 +65,7 @@ export class TelegramCron{
 	}
 	
 	private async getBanUser(): Promise<UserEdit[]>{
-		const twitchSubs: number[] = await this.twitch.getCurrentSubs();
+		const twitchSubs: BigInt[] = await this.twitch.getCurrentSubs();
 		let users: UserEdit[] = await this.db.getUsers();
 		users = users.filter((user) => {
 			twitchSubs.includes(user.twitch_id);

@@ -23,7 +23,7 @@ export class TelegramBotInstance implements TelegramBot {
 	static TELEGRAM_API: string = "api.telegram.org";
 	static TELEGRAM_URL: string =
 	"api.telegram.org/bot" + TelegramBotInstance.token;
-	chatId: number;
+	chatId: BigInt;
 	
 	/**
 	* Receive and handle message sent to the bot
@@ -139,10 +139,10 @@ export class TelegramBotInstance implements TelegramBot {
 
 	/**
 	 * Get Chat from the specified id
-	 * @param {number} chatId chat id
+	 * @param {BigInt} chatId chat id
 	 * @return {Chat} the requested Chat
 	 */
-	async getChat(chatId: number): Promise<Chat>{
+	async getChat(chatId: BigInt): Promise<Chat>{
 		const opt: ApiRequest = {
 			url: TelegramBotInstance.TELEGRAM_URL + "/getChat",
 			method: "POST",
@@ -159,7 +159,7 @@ export class TelegramBotInstance implements TelegramBot {
 		return result.result;
 	}
 
-	async userInGroup(userId: number): Promise<boolean>{
+	async userInGroup(userId: BigInt): Promise<boolean>{
 		const opt: ApiRequest = {
 			url: TelegramBotInstance.TELEGRAM_URL + "/getChatMember",
 			method: "POST",
@@ -177,7 +177,7 @@ export class TelegramBotInstance implements TelegramBot {
 		return result.ok;
 	}
 
-	async banUser(userId: number): Promise<void>{
+	async banUser(userId: BigInt): Promise<void>{
 		const query = generateQuery({
 			chat_id: process.env.TELEGRAM_GROUP,
 			user_id: userId,
@@ -197,10 +197,10 @@ export class TelegramBotInstance implements TelegramBot {
 
 	/**
 	 * Get the user data from the user id
-	 * @param {number} userId telegram user id
+	 * @param {BigInt} userId telegram user id
 	 * @returns {Promise<TelegramUser>} telegram user data
 	 */
-	async getUser(userId: number): Promise<TelegramUser>{
+	async getUser(userId: BigInt): Promise<TelegramUser>{
 		const opt: ApiRequest = {
 			url: TelegramBotInstance.TELEGRAM_URL + "/getChatMember",
 			method: "POST",

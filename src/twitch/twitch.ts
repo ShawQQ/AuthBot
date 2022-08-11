@@ -30,9 +30,9 @@ export class TwitchInstance implements Twitch {
 	/**
 	* Return the twitch id of the specified user
 	* @param {UserAuthToken} user OAuth2 token for the user
-	* @return {Promise<number>} twitch id of the suer
+	* @return {Promise<BigInt>} twitch id of the suer
 	*/
-	async getUser(user: UserAuthToken): Promise<number> {
+	async getUser(user: UserAuthToken): Promise<BigInt> {
 		const req: ApiRequest = {
 			url: "api.twitch.tv/helix/users",
 			headers: {
@@ -52,9 +52,9 @@ export class TwitchInstance implements Twitch {
 	
 	/**
 	* Get the current subs of the admin channel
-	* @return {Promise<Array<number>>} list of the ids of the current subscribers 
+	* @return {Promise<Array<BigInt>>} list of the ids of the current subscribers 
 	*/
-	async getCurrentSubs(): Promise<Array<number>> {
+	async getCurrentSubs(): Promise<Array<BigInt>> {
 		const token: UserAuthToken = await this.updateAdminToken();
 		return await this._getCurrentSub("", token);
 	}
@@ -100,13 +100,13 @@ export class TwitchInstance implements Twitch {
 	 * Get all the subscribers to the broadcaster channel recursively 
 	 * @param {string} pagination current page of subscribers 
 	 * @param {UserAuthToken} token OAuth2 token of the admin channel 
-	 * @return {Promise<Array<number>>} list of ids
+	 * @return {Promise<Array<BigInt>>} list of ids
 	 */
 	private async _getCurrentSub(
 		pagination: string,
 		token: UserAuthToken
-		): Promise<Array<number>> {
-			const broadcasterId: number = await this.getUser(token);
+		): Promise<Array<BigInt>> {
+			const broadcasterId: BigInt = await this.getUser(token);
 			const queryParam = {
 				broadcaster_id: broadcasterId,
 				first: 100,
@@ -124,7 +124,7 @@ export class TwitchInstance implements Twitch {
 				},
 			};
 			const data: TwitchSub = await apiCall<TwitchSub>(opt);
-			let users: number[] = [];
+			let users: BigInt[] = [];
 			for (const user of data.data) {
 				users.push(user.user_id);
 			}
@@ -169,7 +169,7 @@ export class TwitchInstance implements Twitch {
 	 */
 	private async checkUserSub(userToken: UserAuthToken): Promise<boolean> {
 		const adminToken: UserAuthToken = await this.updateAdminToken();
-		const ids: Array<number> = [
+		const ids: Array<BigInt> = [
 			await this.getUser(adminToken),
 			await this.getUser(userToken),
 		];

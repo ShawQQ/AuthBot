@@ -1,7 +1,7 @@
 import { AdminToken } from "../../twitch/types/twitch";
 export type UserEdit = {
-  twitch_id: number,
-  telegram_id: number,
+  twitch_id: BigInt,
+  telegram_id: BigInt,
   telegram_handle: string,
   is_vip: boolean,
 }

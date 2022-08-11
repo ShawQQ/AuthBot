@@ -65,7 +65,7 @@ export function setRoute(): void {
 		const authResult = await twitch.completeAuth(data.code);
 		if (authResult.is_sub) {
 			const inviteLink: InviteLink = await telegram.createInviteLink({
-				chat_id: process.env.TELEGRAM_GROUP as unknown as number,
+				chat_id: process.env.TELEGRAM_GROUP as unknown as BigInt,
 				expire_date: 0,
 				member_limit: 1,
 			});
